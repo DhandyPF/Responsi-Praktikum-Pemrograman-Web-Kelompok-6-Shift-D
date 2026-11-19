@@ -15,6 +15,13 @@ $user = current_user();
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    (() => {
+      const saved = localStorage.getItem("nusakarya-theme");
+      const theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <script>
     tailwind.config = { theme: { extend: { colors: {
       ink:'#0F172A', teal:'#0F766E', emerald:'#059669', mist:'#F8FAFC'
     }, fontFamily: { sans:['Inter','sans-serif'], heading:['Plus Jakarta Sans','sans-serif'] } } } };
@@ -40,6 +47,7 @@ $user = current_user();
         <a class="nav-login" href="<?= BASE_URL ?>/auth/login.php">Masuk</a>
         <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/register.php">Daftar Gratis <span aria-hidden="true">→</span></a>
       <?php endif; ?>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false">Mode gelap</button>
     </div>
   </nav>
 </header>
