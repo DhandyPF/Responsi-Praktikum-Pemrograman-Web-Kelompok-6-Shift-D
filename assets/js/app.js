@@ -1,30 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const themeToggle = document.getElementById("themeToggle");
-  const savedTheme = localStorage.getItem("nusakarya-theme");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
-
-  const applyTheme = (theme) => {
-    document.documentElement.dataset.theme = theme;
-    document.body.dataset.theme = theme;
-    if (themeToggle) {
-      const dark = theme === "dark";
-      themeToggle.textContent = dark ? "Mode terang" : "Mode gelap";
-      themeToggle.setAttribute(
-        "aria-label",
-        dark ? "Aktifkan mode terang" : "Aktifkan mode gelap",
-      );
-      themeToggle.setAttribute("aria-pressed", String(dark));
-    }
-  };
-
-  applyTheme(initialTheme);
-  themeToggle?.addEventListener("click", () => {
-    const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
-    localStorage.setItem("nusakarya-theme", nextTheme);
-    applyTheme(nextTheme);
-  });
-
   const toggle = document.getElementById("menuToggle");
   const nav = document.getElementById("navLinks");
   if (toggle && nav)

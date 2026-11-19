@@ -6,7 +6,7 @@
     </div>
     <div><h3 class="footer-title">Jelajahi</h3><a href="<?= BASE_URL ?>/lowongan.php">Lowongan kerja</a><a href="<?= BASE_URL ?>/jasa.php">Bursa jasa</a><a href="<?= BASE_URL ?>/pelatihan.php">Pelatihan</a></div>
     <div><h3 class="footer-title">Untuk komunitas</h3><a href="<?= BASE_URL ?>/auth/register.php">Daftar sebagai talenta</a><a href="<?= BASE_URL ?>/auth/register.php">Daftar sebagai penyedia</a><a href="<?= BASE_URL ?>/auth/login.php">Masuk akun</a></div>
-    <!-- <div><h3 class="footer-title">Dampak kami</h3><p class="text-emerald-300 font-bold">SDG 8 · SDG 9</p><p class="text-slate-400 text-sm mt-3 leading-6">Mendukung pekerjaan layak, pertumbuhan ekonomi, industri, inovasi, dan infrastruktur.</p></div> -->
+    <div><h3 class="footer-title">Dampak kami</h3><p class="text-emerald-300 font-bold">SDG 8 · SDG 9</p><p class="text-slate-400 text-sm mt-3 leading-6">Mendukung pekerjaan layak, pertumbuhan ekonomi, industri, inovasi, dan infrastruktur.</p></div>
   </div>
   <div class="max-w-6xl mx-auto px-5 py-5 border-t border-slate-700/70 text-slate-500 text-xs flex flex-wrap justify-between gap-2"><span>© <?= date('Y') ?> NusaKarya. Seluruh hak cipta dilindungi.</span><span>Dirancang untuk potensi lokal yang lebih berdaya.</span></div>
 </footer>
