@@ -1,1 +1,18 @@
+<<<<<<< HEAD
+# Editor / local preview
 palette-preview.html
+
+# Runtime uploads: simpan folder dan proteksi, jangan commit file pengguna
+/uploads/portfolio/*
+!/uploads/portfolio/.htaccess
+!/uploads/portfolio/.gitkeep
+/uploads/payments/*
+!/uploads/payments/.htaccess
+!/uploads/payments/.gitkeep
+
+# Local secrets / merchant credentials
+/config/midtrans.local.php
+/config/manual-payment.php
+=======
+palette-preview.html
+>>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a

@@ -1,7 +1,0 @@
-<?php
-require_once __DIR__ . '/config/koneksi.php'; require_once __DIR__ . '/config/functions.php';
-$items=$pdo->query("SELECT p.*,u.nama penyedia FROM pelatihan p JOIN users u ON u.id=p.penyedia_id ORDER BY p.created_at DESC")->fetchAll();
-$pageTitle='Pelatihan'; require __DIR__.'/includes/header.php';
-?>
-<main class="max-w-6xl mx-auto px-5 py-16 min-h-[65vh]"><p class="eyebrow">Belajar, buktikan, bertumbuh</p><h1 class="text-4xl font-extrabold text-ink mt-3">Skill baru, peluang baru.</h1><p class="text-sm text-slate-500 mt-3">Ikuti pelatihan pilihan dan dapatkan badge setelah menyelesaikan proses belajar.</p><section class="mt-14"><h2 class="text-2xl font-extrabold text-ink mb-6">Pelatihan yang tersedia</h2><div class="card-grid"><?php foreach($items as $x): ?><article class="job-card"><div class="avatar">✦</div><p class="eyebrow mt-5"><?= e($x['kategori']) ?> · <?= (int)$x['jumlah_modul'] ?> modul</p><h3 class="font-bold text-ink mt-2"><?= e($x['judul_pelatihan']) ?></h3><p class="text-xs text-slate-500 leading-6 mt-2"><?= e($x['deskripsi']) ?></p><div class="border-t mt-5 pt-4 flex justify-between items-center"><span class="text-xs text-slate-500"><?= e($x['penyedia']) ?></span><span class="badge-amber">Badge tersedia</span></div><a class="text-link inline-block mt-4" href="<?= BASE_URL ?>/auth/login.php">Ikuti pelatihan →</a></article><?php endforeach; ?></div></section></main>
-<?php require __DIR__.'/includes/footer.php'; ?>

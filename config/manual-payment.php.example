@@ -1,0 +1,6 @@
+<?php
+// Salin menjadi manual-payment.php dan isi rekening resmi milik badan usaha/platform.
+// Jangan pernah meminta pembeli transfer ke rekening pribadi admin/pekerja.
+return [
+  ['bank' => 'Nama Bank', 'account' => '0000000000', 'holder' => 'Nama Pemilik Rekening'],
+];

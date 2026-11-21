@@ -1,4 +1,19 @@
 <?php
+<<<<<<< HEAD
+require_once __DIR__ . '/../config/koneksi.php';require_once __DIR__ . '/../config/stage2.php';require_login('penyedia');
+$user=current_user();$error='';
+if($_SERVER['REQUEST_METHOD']==='POST'){
+ verify_csrf();$status=$_POST['status']??'';$id=(int)($_POST['id']??0);$note=trim($_POST['catatan']??'');
+ if(!in_array($status,['Menunggu','Diproses','Diterima','Ditolak'],true))$error='Status tidak valid.';
+ elseif(mb_strlen($note)>2000)$error='Catatan maksimal 2.000 karakter.';
+ else{try{if(record_application_status($pdo,$id,$status,$note,(int)$user['id']))flash('success','Status kandidat berhasil diperbarui.');else $error='Lamaran tidak ditemukan atau bukan milik Anda.';}catch(Throwable $e){$error='Gagal memperbarui status lamaran.';error_log($e->getMessage());}}
+}
+$stmt=$pdo->prepare("SELECT l.*,u.nama,u.email,u.telepon,u.lokasi,lo.judul FROM lamaran l JOIN users u ON u.id=l.pekerja_id JOIN lowongan lo ON lo.id=l.lowongan_id WHERE lo.penyedia_id=:user ORDER BY l.tanggal_lamar DESC");$stmt->execute(['user'=>(int)$user['id']]);$items=$stmt->fetchAll();
+$pageTitle='Kelola Kandidat';require __DIR__.'/../includes/header.php';$success=flash('success');
+?>
+<main class="dashboard-main"><p class="eyebrow">Penyedia usaha</p><h1 class="dashboard-title">Kelola kandidat</h1><?php if($success):?><div class="alert alert-success"><?=e($success)?></div><?php endif?><?php if($error):?><div class="alert alert-error"><?=e($error)?></div><?php endif?><section class="dashboard-panel"><h2>Pelamar masuk</h2>
+<?php if($items):?><div class="space-y-5 mt-4"><?php foreach($items as $x):?><article class="surface-card p-4"><div class="flex flex-wrap justify-between gap-3"><div><b><?=e($x['nama'])?></b><p class="text-xs text-slate-500 mt-1"><?=e($x['email'])?> · <?=e($x['lokasi'])?> · <?=e($x['telepon'])?></p><p class="text-sm mt-2">Melamar: <b><?=e($x['judul'])?></b> · <?=e(date('d M Y',strtotime($x['tanggal_lamar'])))?></p></div><span class="badge-green"><?=e($x['status'])?></span></div><form method="post" class="grid md:grid-cols-[1fr_2fr_auto] gap-3 mt-4"><input type="hidden" name="_csrf" value="<?=e(csrf_token())?>"><input type="hidden" name="id" value="<?=(int)$x['id']?>"><div><label class="form-label">Status</label><select class="form-control" name="status"><?php foreach(['Menunggu','Diproses','Diterima','Ditolak'] as $s):?><option value="<?=e($s)?>" <?=$x['status']===$s?'selected':''?>><?=e($s)?></option><?php endforeach?></select></div><div><label class="form-label">Catatan untuk kandidat</label><input class="form-control" name="catatan" maxlength="2000" placeholder="Opsional: alasan atau arahan berikutnya"></div><div class="flex items-end"><button class="btn-primary" type="submit">Simpan status</button></div></form></article><?php endforeach?></div><?php else:?><div class="empty-state">Belum ada kandidat yang melamar lowongan Anda.</div><?php endif?></section></main><?php require __DIR__.'/../includes/footer.php';?>
+=======
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/functions.php';
 require_login('penyedia');
@@ -19,3 +34,4 @@ $pageTitle='Kelola Kandidat'; require __DIR__.'/../includes/header.php';
 <?php foreach($items as $x): ?><tr><th><?= e($x['nama']) ?><small><?= e($x['lokasi']) ?> · <?= e($x['telepon']) ?></small></th><td><?= e($x['judul']) ?></td><td><span class="badge-green"><?= e($x['status']) ?></span></td><td><form method="post" class="inline-form"><input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int)$x['id'] ?>"><select class="form-control" name="status"><?php foreach(['Menunggu','Diproses','Diterima','Ditolak'] as $s): ?><option <?= $x['status']===$s?'selected':'' ?>><?= e($s) ?></option><?php endforeach ?></select><button class="text-link" type="submit">Simpan</button></form></td></tr><?php endforeach ?>
 </tbody></table></div><?php else: ?><div class="empty-state">Belum ada kandidat yang melamar lowongan Anda.</div><?php endif ?>
 </section></main><?php require __DIR__.'/../includes/footer.php'; ?>
+>>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a

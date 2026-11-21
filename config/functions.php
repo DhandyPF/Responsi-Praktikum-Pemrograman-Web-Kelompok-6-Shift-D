@@ -12,6 +12,16 @@ function redirect(string $path): never {
     header('Location: ' . BASE_URL . $path);
     exit;
 }
+function dashboard_path(?array $user = null): string {
+    $user = $user ?? current_user();
+    if (!$user) return '/auth/login.php';
+    return match ($user['role'] ?? '') {
+        'pekerja' => '/pekerja/dashboard.php',
+        'penyedia' => '/penyedia/dashboard.php',
+        'admin' => '/admin/dashboard.php',
+        default => '/auth/login.php',
+    };
+}
 function csrf_token(): string {
     if (empty($_SESSION['_csrf'])) $_SESSION['_csrf'] = bin2hex(random_bytes(32));
     return $_SESSION['_csrf'];
@@ -29,7 +39,7 @@ function current_user(): ?array {
 function require_login(?string $role = null): void {
     $user = current_user();
     if (!$user) redirect('/auth/login.php');
-    if ($role !== null && $user['role'] !== $role) {
+    if ($role !== null && ($user['role'] ?? '') !== $role) {
         http_response_code(403);
         exit('Anda tidak memiliki akses ke halaman ini.');
     }

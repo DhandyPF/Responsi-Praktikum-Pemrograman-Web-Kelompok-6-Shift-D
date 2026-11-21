@@ -1,7 +1,9 @@
 <?php
-require_once __DIR__ . '/config/koneksi.php';
 require_once __DIR__ . '/config/functions.php';
 require_login();
+<<<<<<< HEAD
+redirect(dashboard_path());
+=======
 $user = current_user();
 $pageTitle = 'Dashboard';
 require __DIR__ . '/includes/header.php';
@@ -25,3 +27,4 @@ require __DIR__ . '/includes/header.php';
  </div>
 </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+>>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a

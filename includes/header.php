@@ -2,6 +2,16 @@
 require_once __DIR__ . '/../config/functions.php';
 $pageTitle = $pageTitle ?? 'NusaKarya';
 $user = current_user();
+// Tahap 3: lencana pesan/notifikasi belum dibaca untuk navigasi (aman bila migrasi belum dijalankan → 0).
+$navPesan = 0; $navNotif = 0; $navPesananUrl = null;
+if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
+    $navPesananUrl = BASE_URL . ($user['role'] === 'pekerja' ? '/pekerja/tahap4-pesanan.php' : '/penyedia/tahap4-pesanan.php');
+    if (isset($pdo) && $pdo instanceof PDO) {
+        require_once __DIR__ . '/../config/stage3.php';
+        $navPesan = unread_message_count($pdo, (int)$user['id']);
+        $navNotif = unread_notification_count($pdo, (int)$user['id']);
+    }
+}
 ?>
 <!doctype html>
 <html lang="id">
@@ -38,16 +48,38 @@ $user = current_user();
     <div class="nav-links" id="navLinks">
       <a href="<?= BASE_URL ?>/index.php">Beranda</a>
       <a href="<?= BASE_URL ?>/lowongan.php">Bursa Kerja</a>
-      <a href="<?= BASE_URL ?>/jasa.php">Marketplace Jasa</a>
+      <a href="<?= BASE_URL ?>/marketplace.php">Marketplace</a>
       <a href="<?= BASE_URL ?>/pelatihan.php">Pelatihan</a>
       <?php if ($user): ?>
-        <a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a>
+        <a href="<?= BASE_URL . dashboard_path($user) ?>">Dashboard</a>
+        <details class="nav-more">
+          <summary>Aktivitas <span aria-hidden="true">⌄</span></summary>
+          <div class="nav-more-menu">
+            <?php if (($user['role'] ?? '') === 'admin'): ?>
+              <a href="<?= BASE_URL ?>/admin/tahap4-transaksi.php">Transaksi</a>
+              <a href="<?= BASE_URL ?>/admin/pencairan.php">Pencairan</a>
+              <a href="<?= BASE_URL ?>/admin/pengguna.php">Pengguna</a>
+            <?php elseif ($navPesananUrl): ?>
+              <a href="<?= e($navPesananUrl) ?>"><?= $user['role'] === 'pekerja' ? 'Pesanan Masuk' : 'Pesanan Saya' ?></a>
+              <?php if (($user['role'] ?? '') === 'pekerja'): ?><a href="<?= BASE_URL ?>/pekerja/dompet.php">Keuangan</a><?php endif ?>
+              <a href="<?= BASE_URL ?>/pesan/index.php">Pesan<?php if ($navPesan > 0): ?> <span class="nav-badge"><?= $navPesan > 99 ? '99+' : (int)$navPesan ?></span><?php endif ?></a>
+              <a href="<?= BASE_URL ?>/notifikasi.php">Notifikasi<?php if ($navNotif > 0): ?> <span class="nav-badge"><?= $navNotif > 99 ? '99+' : (int)$navNotif ?></span><?php endif ?></a>
+            <?php endif ?>
+          </div>
+        </details>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false">Mode gelap</button>
         <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/logout.php">Keluar</a>
       <?php else: ?>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false">Mode gelap</button>
         <a class="nav-login" href="<?= BASE_URL ?>/auth/login.php">Masuk</a>
+<<<<<<< HEAD
+        <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/register.php">Daftar</a>
+      <?php endif ?>
+=======
         <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/register.php">Daftar Gratis <span aria-hidden="true">→</span></a>
       <?php endif; ?>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false">Mode gelap</button>
+>>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a
     </div>
   </nav>
 </header>
