@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/functions.php';
-if (current_user()) redirect('/dashboard.php');
+if (current_user()) redirect(dashboard_path());
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'id'=>(int)$pdo->lastInsertId(),'nama'=>$nama,'email'=>$email,'role'=>$role,
                 'lokasi'=>$lokasi,'is_verified'=>0
             ];
-            redirect('/dashboard.php');
+            redirect(dashboard_path());
         }
     }
 }

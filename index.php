@@ -55,7 +55,7 @@ require __DIR__ . '/includes/header.php';
    <article class="job-card">
     <div class="flex items-center gap-3"><div class="company-icon"><?= e(strtoupper(substr($job['penyedia'],0,1))) ?></div><div><h3 class="font-bold text-ink text-sm"><?= e($job['penyedia']) ?></h3><p class="text-xs text-slate-500 mt-1"><?= e($job['lokasi']) ?></p></div><?php if($job['is_verified']): ?><span class="badge-green ml-auto">Terverifikasi</span><?php endif; ?></div>
     <h3 class="font-bold text-ink mt-6"><?= e($job['judul']) ?></h3><p class="text-xs text-slate-500 mt-2"><?= e($job['kategori']) ?> · <?= e($job['jenis_pekerjaan']) ?></p>
-    <div class="border-t border-slate-100 mt-5 pt-4 flex justify-between items-center"><b class="text-sm text-ink"><?= rupiah($job['gaji_min']) ?>–<?= rupiah($job['gaji_max']) ?></b><a class="text-link" href="<?= BASE_URL ?>/lowongan.php">Detail →</a></div>
+    <div class="border-t border-slate-100 mt-5 pt-4 flex justify-between items-center"><b class="text-sm text-ink"><?= rupiah($job['gaji_min']) ?>–<?= rupiah($job['gaji_max']) ?></b><a class="text-link" href="<?= BASE_URL ?>/detail-lowongan.php?id=<?= (int)$job['id'] ?>">Detail →</a></div>
    </article>
    <?php endforeach; ?>
    <?php if (!$jobs): ?><div class="empty-state col-span-full">Belum ada lowongan aktif. Silakan kembali lagi nanti.</div><?php endif; ?>

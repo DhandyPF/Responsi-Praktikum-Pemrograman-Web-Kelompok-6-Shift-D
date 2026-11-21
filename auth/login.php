@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/functions.php';
-if (current_user()) redirect('/dashboard.php');
+if (current_user()) redirect(dashboard_path());
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_regenerate_id(true);
             unset($account['password']);
             $_SESSION['user'] = $account;
-            redirect('/dashboard.php');
+            redirect(dashboard_path());
         }
         $error = 'Email atau kata sandi tidak sesuai.';
     }
