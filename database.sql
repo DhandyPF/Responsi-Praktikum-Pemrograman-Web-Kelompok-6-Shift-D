@@ -341,8 +341,8 @@ ALTER TABLE pesanan
 ALTER TABLE pesanan
   DROP FOREIGN KEY fk_pesanan_pembeli,
   DROP FOREIGN KEY fk_pesanan_pekerja,
-  ADD CONSTRAINT fk_pesanan_pembeli FOREIGN KEY (pembeli_id) REFERENCES users(id) ON DELETE RESTRICT,
-  ADD CONSTRAINT fk_pesanan_pekerja FOREIGN KEY (pekerja_id) REFERENCES users(id) ON DELETE RESTRICT;
+  ADD CONSTRAINT fk_nk_final_pesanan_pembeli FOREIGN KEY (pembeli_id) REFERENCES users(id) ON DELETE RESTRICT,
+  ADD CONSTRAINT fk_nk_final_pesanan_pekerja FOREIGN KEY (pekerja_id) REFERENCES users(id) ON DELETE RESTRICT;
 
 -- 3. Penawaran harga dan jejak versi negosiasi.
 CREATE TABLE penawaran (
