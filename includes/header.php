@@ -72,14 +72,8 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
       <?php else: ?>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false">Mode gelap</button>
         <a class="nav-login" href="<?= BASE_URL ?>/auth/login.php">Masuk</a>
-<<<<<<< HEAD
         <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/register.php">Daftar</a>
       <?php endif ?>
-=======
-        <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/register.php">Daftar Gratis <span aria-hidden="true">→</span></a>
-      <?php endif; ?>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false">Mode gelap</button>
->>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a
     </div>
   </nav>
 </header>
