@@ -1,10 +1,127 @@
 <?php
-require_once __DIR__.'/../config/koneksi.php';require_once __DIR__.'/../config/tahap4.php';require_login('admin');$u=current_user();$err='';
-if($_SERVER['REQUEST_METHOD']==='POST'){verify_csrf();try{$id=(int)($_POST['payout_id']??0);$action=$_POST['action']??'';$note=trim($_POST['note']??'');$reference=trim($_POST['reference']??'');$pdo->beginTransaction();$q=$pdo->prepare('SELECT p.*,w.saldo_tersedia,w.saldo_diproses,w.total_dicairkan FROM pencairan_pekerja p JOIN dompet_pekerja w ON w.id=p.dompet_id WHERE p.id=? FOR UPDATE');$q->execute([$id]);$p=$q->fetch();if(!$p)throw new RuntimeException('Permintaan pencairan tidak ditemukan.');$q=$pdo->prepare('SELECT * FROM dompet_pekerja WHERE id=? FOR UPDATE');$q->execute([$p['dompet_id']]);$w=$q->fetch();
-if($action==='approve'&&$p['status']==='Menunggu'){$pdo->prepare("UPDATE pencairan_pekerja SET status='Disetujui',diproses_oleh=?,catatan_admin=? WHERE id=?")->execute([$u['id'],$note?:null,$id]);}
-elseif($action==='processing'&&$p['status']==='Disetujui'){$pdo->prepare("UPDATE pencairan_pekerja SET status='Diproses',diproses_oleh=?,catatan_admin=? WHERE id=?")->execute([$u['id'],$note?:null,$id]);}
-elseif($action==='paid'&&$p['status']==='Diproses'){if($reference==='')throw new RuntimeException('Isi nomor referensi transfer untuk menandai berhasil.');$pdo->prepare("UPDATE pencairan_pekerja SET status='Berhasil',diproses_oleh=?,referensi_transfer=?,catatan_admin=?,selesai_at=NOW() WHERE id=?")->execute([$u['id'],$reference,$note?:null,$id]);$pending=max(0,(float)$w['saldo_diproses']-(float)$p['jumlah']);$paid=(float)$w['total_dicairkan']+(float)$p['jumlah'];$pdo->prepare('UPDATE dompet_pekerja SET saldo_diproses=?,total_dicairkan=? WHERE id=?')->execute([$pending,$paid,$w['id']]);$pdo->prepare("INSERT INTO mutasi_dompet (dompet_id,jenis,arah,jumlah,saldo_setelah,referensi_tipe,referensi_id,keterangan,dibuat_oleh) VALUES (?,'Pencairan Berhasil','Keluar',?,?,?,?,?,?)")->execute([$w['id'],$p['jumlah'],$w['saldo_tersedia'],'pencairan',$id,'Transfer pencairan '.$p['kode_pencairan'],$u['id']]);notify($pdo,(int)$p['pekerja_id'],'pembayaran','Pencairan berhasil','Pencairan '.$p['kode_pencairan'].' sebesar '.rupiah($p['jumlah']).' telah ditransfer.','/pekerja/dompet.php');}
-elseif(in_array($action,['reject','failed'],true)&&in_array($p['status'],['Menunggu','Disetujui','Diproses'],true)){$new=(float)$w['saldo_tersedia']+(float)$p['jumlah'];$pending=max(0,(float)$w['saldo_diproses']-(float)$p['jumlah']);$pdo->prepare('UPDATE dompet_pekerja SET saldo_tersedia=?,saldo_diproses=? WHERE id=?')->execute([$new,$pending,$w['id']]);$status=$action==='reject'?'Ditolak':'Gagal';$pdo->prepare('UPDATE pencairan_pekerja SET status=?,diproses_oleh=?,catatan_admin=?,selesai_at=NOW() WHERE id=?')->execute([$status,$u['id'],$note?:'Pencairan tidak berhasil; saldo dikembalikan.',$id]);$pdo->prepare("INSERT INTO mutasi_dompet (dompet_id,jenis,arah,jumlah,saldo_setelah,referensi_tipe,referensi_id,keterangan,dibuat_oleh) VALUES (?,'Pencairan Gagal','Masuk',?,?,?,?,?,?)")->execute([$w['id'],$p['jumlah'],$new,'pencairan',$id,'Saldo dikembalikan dari '.$p['kode_pencairan'],$u['id']]);notify($pdo,(int)$p['pekerja_id'],'pembayaran','Pencairan tidak berhasil','Permintaan '.$p['kode_pencairan'].' gagal. Saldo telah dikembalikan ke saldo tersedia.','/pekerja/dompet.php');}
-else throw new RuntimeException('Aksi tidak sesuai dengan status pencairan.');t4_audit($pdo,(int)$u['id'],'payout.'.$action,'pencairan_pekerja',$id,['status_before'=>$p['status']]);$pdo->commit();t4_flash_redirect('Status pencairan diperbarui.','/admin/pencairan.php');}catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();$err=$e instanceof RuntimeException?$e->getMessage():'Gagal memproses pencairan.';error_log('admin payout: '.$e->getMessage());}}
-$q=$pdo->query('SELECT p.*,u.nama nama_pekerja FROM pencairan_pekerja p JOIN users u ON u.id=p.pekerja_id ORDER BY FIELD(p.status,\'Menunggu\',\'Disetujui\',\'Diproses\',\'Berhasil\',\'Ditolak\',\'Gagal\'),p.diminta_at ASC LIMIT 150');$rows=$q->fetchAll();$pageTitle='Pencairan pekerja';require __DIR__.'/../includes/header.php';?>
-<main class="dashboard-main"><p class="eyebrow">Administrasi keuangan</p><h1 class="dashboard-title">Pencairan pekerja</h1><?php if($err):?><div class="alert alert-error mb-4"><?=e($err)?></div><?php endif?><section class="dashboard-panel"><p class="text-sm text-slate-500 mb-4">Admin melakukan transfer bank di luar aplikasi, lalu mencatat referensi transfer untuk menutup permintaan pencairan.</p><?php foreach($rows as $p):?><article class="border rounded-xl p-4 mb-3"><div class="flex flex-wrap justify-between gap-2"><div><b><?=e($p['kode_pencairan'])?> · <?=e($p['nama_pekerja'])?></b><p class="text-sm text-slate-500"><?=e($p['nama_bank'])?> · <?=e($p['nomor_rekening'])?> · <?=e($p['nama_pemilik_rekening'])?></p></div><b><?=rupiah($p['jumlah'])?></b></div><p class="text-xs text-slate-500 mt-1">Status: <?=e($p['status'])?> · <?=e($p['diminta_at'])?></p><?php if($p['referensi_transfer']):?><p class="text-xs mt-1">Referensi: <?=e($p['referensi_transfer'])?></p><?php endif?><?php if(in_array($p['status'],['Menunggu','Disetujui','Diproses'],true)):?><form method="post" class="mt-3 grid md:grid-cols-2 gap-2"><input type="hidden" name="_csrf" value="<?=e(csrf_token())?>"><input type="hidden" name="payout_id" value="<?=(int)$p['id']?>"><input class="form-control" name="note" placeholder="Catatan admin (opsional)"><?php if($p['status']==='Menunggu'):?><button class="btn-primary" name="action" value="approve">Setujui</button><button class="btn-secondary" name="action" value="reject">Tolak & kembalikan saldo</button><?php elseif($p['status']==='Disetujui'):?><button class="btn-primary" name="action" value="processing">Tandai sedang ditransfer</button><button class="btn-secondary" name="action" value="failed">Gagal & kembalikan saldo</button><?php else:?><input class="form-control" name="reference" placeholder="Nomor referensi transfer" required><button class="btn-primary" name="action" value="paid">Tandai transfer berhasil</button><button class="btn-secondary" name="action" value="failed">Transfer gagal & kembalikan saldo</button><?php endif?></form><?php elseif($p['catatan_admin']):?><p class="text-sm text-slate-500 mt-2"><?=e($p['catatan_admin'])?></p><?php endif?></article><?php endforeach?><?php if(!$rows):?><p class="empty-state">Belum ada permintaan pencairan.</p><?php endif?></section></main><?php require __DIR__.'/../includes/footer.php';?>
+require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/../config/tahap4.php';
+
+require_login('admin');
+$u = current_user();
+$err = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf();
+    try {
+        $id = (int)($_POST['payout_id'] ?? 0);
+        $action = $_POST['action'] ?? '';
+        $note = trim($_POST['note'] ?? '');
+        $reference = trim($_POST['reference'] ?? '');
+
+        $pdo->beginTransaction();
+        $q = $pdo->prepare('SELECT p.*, w.saldo_tersedia, w.saldo_diproses, w.total_dicairkan FROM pencairan_pekerja p JOIN dompet_pekerja w ON w.id = p.dompet_id WHERE p.id = ? FOR UPDATE');
+        $q->execute([$id]);
+        $p = $q->fetch();
+        if (!$p) {
+            throw new RuntimeException('Permintaan pencairan tidak ditemukan.');
+        }
+
+        $q = $pdo->prepare('SELECT * FROM dompet_pekerja WHERE id = ? FOR UPDATE');
+        $q->execute([$p['dompet_id']]);
+        $w = $q->fetch();
+
+        if ($action === 'approve' && $p['status'] === 'Menunggu') {
+            $pdo->prepare("UPDATE pencairan_pekerja SET status = 'Disetujui', diproses_oleh = ?, catatan_admin = ? WHERE id = ?")->execute([$u['id'], $note ?: null, $id]);
+        } elseif ($action === 'processing' && $p['status'] === 'Disetujui') {
+            $pdo->prepare("UPDATE pencairan_pekerja SET status = 'Diproses', diproses_oleh = ?, catatan_admin = ? WHERE id = ?")->execute([$u['id'], $note ?: null, $id]);
+        } elseif ($action === 'paid' && $p['status'] === 'Diproses') {
+            if ($reference === '') {
+                throw new RuntimeException('Isi nomor referensi transfer untuk menandai berhasil.');
+            }
+            $pdo->prepare("UPDATE pencairan_pekerja SET status = 'Berhasil', diproses_oleh = ?, referensi_transfer = ?, catatan_admin = ?, selesai_at = NOW() WHERE id = ?")->execute([$u['id'], $reference, $note ?: null, $id]);
+            $pending = max(0, (float)$w['saldo_diproses'] - (float)$p['jumlah']);
+            $paid = (float)$w['total_dicairkan'] + (float)$p['jumlah'];
+            $pdo->prepare('UPDATE dompet_pekerja SET saldo_diproses = ?, total_dicairkan = ? WHERE id = ?')->execute([$pending, $paid, $w['id']]);
+            $pdo->prepare("INSERT INTO mutasi_dompet (dompet_id, jenis, arah, jumlah, saldo_setelah, referensi_tipe, referensi_id, keterangan, dibuat_oleh) VALUES (?, 'Pencairan Berhasil', 'Keluar', ?, ?, ?, ?, ?, ?)")->execute([$w['id'], $p['jumlah'], $w['saldo_tersedia'], 'pencairan', $id, 'Transfer pencairan ' . $p['kode_pencairan'], $u['id']]);
+            notify($pdo, (int)$p['pekerja_id'], 'pembayaran', 'Pencairan berhasil', 'Pencairan ' . $p['kode_pencairan'] . ' sebesar ' . rupiah($p['jumlah']) . ' telah ditransfer.', '/pekerja/dompet.php');
+        } elseif (in_array($action, ['reject', 'failed'], true) && in_array($p['status'], ['Menunggu', 'Disetujui', 'Diproses'], true)) {
+            $new = (float)$w['saldo_tersedia'] + (float)$p['jumlah'];
+            $pending = max(0, (float)$w['saldo_diproses'] - (float)$p['jumlah']);
+            $pdo->prepare('UPDATE dompet_pekerja SET saldo_tersedia = ?, saldo_diproses = ? WHERE id = ?')->execute([$new, $pending, $w['id']]);
+            $status = $action === 'reject' ? 'Ditolak' : 'Gagal';
+            $pdo->prepare('UPDATE pencairan_pekerja SET status = ?, diproses_oleh = ?, catatan_admin = ?, selesai_at = NOW() WHERE id = ?')->execute([$status, $u['id'], $note ?: 'Pencairan tidak berhasil; saldo dikembalikan.', $id]);
+            $pdo->prepare("INSERT INTO mutasi_dompet (dompet_id, jenis, arah, jumlah, saldo_setelah, referensi_tipe, referensi_id, keterangan, dibuat_oleh) VALUES (?, 'Pencairan Gagal', 'Masuk', ?, ?, ?, ?, ?, ?)")->execute([$w['id'], $p['jumlah'], $new, 'pencairan', $id, 'Saldo dikembalikan dari ' . $p['kode_pencairan'], $u['id']]);
+            notify($pdo, (int)$p['pekerja_id'], 'pembayaran', 'Pencairan tidak berhasil', 'Permintaan ' . $p['kode_pencairan'] . ' gagal. Saldo telah dikembalikan ke saldo tersedia.', '/pekerja/dompet.php');
+        } else {
+            throw new RuntimeException('Aksi tidak sesuai dengan status pencairan.');
+        }
+
+        t4_audit($pdo, (int)$u['id'], 'payout.' . $action, 'pencairan_pekerja', $id, ['status_before' => $p['status']]);
+        $pdo->commit();
+        t4_flash_redirect('Status pencairan diperbarui.', '/admin/pencairan.php');
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        $err = $e instanceof RuntimeException ? $e->getMessage() : 'Gagal memproses pencairan.';
+        error_log('admin payout: ' . $e->getMessage());
+    }
+}
+
+$q = $pdo->query("SELECT p.*, u.nama AS nama_pekerja FROM pencairan_pekerja p JOIN users u ON u.id = p.pekerja_id ORDER BY FIELD(p.status, 'Menunggu', 'Disetujui', 'Diproses', 'Berhasil', 'Ditolak', 'Gagal'), p.diminta_at ASC LIMIT 150");
+$rows = $q->fetchAll();
+
+$pageTitle = 'Pencairan pekerja';
+require __DIR__ . '/../includes/header.php';
+?>
+<main class="dashboard-main">
+    <p class="eyebrow">Administrasi keuangan</p>
+    <h1 class="dashboard-title">Pencairan pekerja</h1>
+
+    <?php if ($err): ?>
+        <div class="alert alert-error mb-4"><?= e($err) ?></div>
+    <?php endif; ?>
+
+    <section class="dashboard-panel">
+        <p class="text-sm text-slate-500 mb-4">Admin melakukan transfer bank di luar aplikasi, lalu mencatat referensi transfer untuk menutup permintaan pencairan.</p>
+
+        <?php foreach ($rows as $p): ?>
+            <article class="border rounded-xl p-4 mb-3">
+                <div class="flex flex-wrap justify-between gap-2">
+                    <div>
+                        <b><?= e($p['kode_pencairan']) ?> · <?= e($p['nama_pekerja']) ?></b>
+                        <p class="text-sm text-slate-500"><?= e($p['nama_bank']) ?> · <?= e($p['nomor_rekening']) ?> · <?= e($p['nama_pemilik_rekening']) ?></p>
+                    </div>
+                    <b><?= rupiah($p['jumlah']) ?></b>
+                </div>
+
+                <p class="text-xs text-slate-500 mt-1">Status: <?= e($p['status']) ?> · <?= e($p['diminta_at']) ?></p>
+                <?php if ($p['referensi_transfer']): ?>
+                    <p class="text-xs mt-1">Referensi: <?= e($p['referensi_transfer']) ?></p>
+                <?php endif; ?>
+
+                <?php if (in_array($p['status'], ['Menunggu', 'Disetujui', 'Diproses'], true)): ?>
+                    <form method="post" class="mt-3 grid md:grid-cols-2 gap-2">
+                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                        <input type="hidden" name="payout_id" value="<?= (int)$p['id'] ?>">
+                        <input class="form-control" name="note" placeholder="Catatan admin (opsional)">
+                        <?php if ($p['status'] === 'Menunggu'): ?>
+                            <button class="btn-primary" name="action" value="approve">Setujui</button>
+                            <button class="btn-secondary" name="action" value="reject">Tolak &amp; kembalikan saldo</button>
+                        <?php elseif ($p['status'] === 'Disetujui'): ?>
+                            <button class="btn-primary" name="action" value="processing">Tandai sedang ditransfer</button>
+                            <button class="btn-secondary" name="action" value="failed">Gagal &amp; kembalikan saldo</button>
+                        <?php else: ?>
+                            <input class="form-control" name="reference" placeholder="Nomor referensi transfer" required>
+                            <button class="btn-primary" name="action" value="paid">Tandai transfer berhasil</button>
+                            <button class="btn-secondary" name="action" value="failed">Transfer gagal &amp; kembalikan saldo</button>
+                        <?php endif; ?>
+                    </form>
+                <?php elseif ($p['catatan_admin']): ?>
+                    <p class="text-sm text-slate-500 mt-2"><?= e($p['catatan_admin']) ?></p>
+                <?php endif; ?>
+            </article>
+        <?php endforeach; ?>
+
+        <?php if (!$rows): ?>
+            <p class="empty-state">Belum ada permintaan pencairan.</p>
+        <?php endif; ?>
+    </section>
+</main>
+<?php require __DIR__ . '/../includes/footer.php'; ?>

@@ -31,14 +31,14 @@ Fitur pendukung yang terintegrasi meliputi notifikasi, rating/ulasan, pengiriman
 
 ## Pemetaan Materi Praktikum Modul 1–6
 
-| Modul praktikum | Penerapan pada NusaKarya |
-|---|---|
-| 1. HTML | Struktur dokumen HTML, heading, teks, tautan, gambar, dan daftar pada halaman aplikasi. |
-| 2. HTML Lanjut | Elemen semantic seperti `header`, `nav`, `main`, `section`, dan `footer`; hyperlink; form input; serta tabel data. |
-| 3. CSS | Stylesheet eksternal `assets/css/style.css`, selector tag/class/id, layout, warna, tipografi, jarak, border, dan styling form. |
-| 4. JavaScript | Event klik dan input, filter daftar, toggle navigasi/tema, konfirmasi tindakan, kalkulasi estimasi upah, dan interaksi chat. |
-| 5. PHP | Variabel, tipe data, array, operator, percabangan, perulangan, fungsi, `include/require`, pemrosesan form, dan validasi sisi server. |
-| 6. PHP CRUD | Koneksi PDO dan operasi tambah, baca, ubah, serta hapus pada data aplikasi seperti lowongan, jasa, portfolio, paket, dan pengelolaan data terkait. |
+| Modul praktikum | Penerapan pada NusaKarya                                                                                                                           |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. HTML         | Struktur dokumen HTML, heading, teks, tautan, gambar, dan daftar pada halaman aplikasi.                                                            |
+| 2. HTML Lanjut  | Elemen semantic seperti `header`, `nav`, `main`, `section`, dan `footer`; hyperlink; form input; serta tabel data.                                 |
+| 3. CSS          | Stylesheet eksternal `assets/css/style.css`, selector tag/class/id, layout, warna, tipografi, jarak, border, dan styling form.                     |
+| 4. JavaScript   | Event klik dan input, filter daftar, toggle navigasi/tema, konfirmasi tindakan, kalkulasi estimasi upah, dan interaksi chat.                       |
+| 5. PHP          | Variabel, tipe data, array, operator, percabangan, perulangan, fungsi, `include/require`, pemrosesan form, dan validasi sisi server.               |
+| 6. PHP CRUD     | Koneksi PDO dan operasi tambah, baca, ubah, serta hapus pada data aplikasi seperti lowongan, jasa, portfolio, paket, dan pengelolaan data terkait. |
 
 ## Teknologi
 

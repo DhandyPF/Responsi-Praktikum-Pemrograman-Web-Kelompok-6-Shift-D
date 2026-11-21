@@ -1,11 +1,75 @@
 <?php
-require_once __DIR__ . '/config/koneksi.php'; require_once __DIR__ . '/config/functions.php';
-try{$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified,(SELECT AVG(r.rating) FROM ulasan r WHERE r.jasa_id=j.id) rating_avg,(SELECT COUNT(*) FROM ulasan r WHERE r.jasa_id=j.id) rating_count FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
-catch(PDOException $e){error_log('jasa rating: '.$e->getMessage());$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
-$pageTitle='Marketplace Jasa'; require __DIR__.'/includes/header.php';
+require_once __DIR__ . '/config/koneksi.php';
+require_once __DIR__ . '/config/functions.php';
+
+try {
+    $items = $pdo->query("SELECT j.*, u.nama AS pekerja, u.is_verified,
+            (SELECT AVG(r.rating) FROM ulasan r WHERE r.jasa_id = j.id) AS rating_avg,
+            (SELECT COUNT(*) FROM ulasan r WHERE r.jasa_id = j.id) AS rating_count
+            FROM jasa j
+            JOIN users u ON u.id = j.pekerja_id
+            ORDER BY j.created_at DESC")->fetchAll();
+} catch (PDOException $e) {
+    error_log('jasa rating: ' . $e->getMessage());
+    $items = $pdo->query("SELECT j.*, u.nama AS pekerja, u.is_verified FROM jasa j JOIN users u ON u.id = j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();
+}
+
+$pageTitle = 'Marketplace Jasa';
+require __DIR__ . '/includes/header.php';
 ?>
-<main class="max-w-6xl mx-auto px-5 py-16 min-h-[65vh]"><p class="eyebrow">Bursa jasa lokal</p><h1 class="text-4xl font-extrabold text-ink mt-3">Temukan talenta untuk kebutuhanmu.</h1><p class="text-sm text-slate-500 mt-3">Jasa mikro dari talenta lokal yang siap membantu bisnis dan proyekmu bertumbuh.</p>
-<div class="filter-bar"><input class="form-control" data-filter-search placeholder="Cari jasa, skill, atau talenta..."><select class="form-control" data-filter-category><option value="">Semua kategori</option><?php foreach(['Desain','Konten','Teknologi','Administrasi'] as $c): ?><option><?= e($c) ?></option><?php endforeach; ?></select><input class="form-control" data-filter-location placeholder="Semua lokasi"><span class="self-center text-xs text-slate-500">Filter otomatis</span></div>
-<div class="card-grid"><?php foreach($items as $x): ?><article class="job-card" data-listing-card data-search="<?= e($x['nama_jasa'].' '.$x['pekerja'].' '.$x['deskripsi']) ?>" data-category="<?= e($x['kategori']) ?>" data-location="<?= e($x['lokasi']) ?>"><div class="flex items-center gap-3"><div class="avatar"><?= e(strtoupper(substr($x['pekerja'],0,1))) ?></div><div><b class="text-sm text-ink"><?= e($x['pekerja']) ?></b><p class="text-xs text-slate-500"><?= e($x['lokasi']) ?></p></div><?php if($x['is_verified']): ?><span class="badge-green ml-auto">Terverifikasi</span><?php endif; ?></div><p class="eyebrow mt-6"><?= e($x['kategori']) ?></p><h2 class="font-bold text-ink mt-2"><?= e($x['nama_jasa']) ?></h2><p class="text-xs text-slate-500 leading-6 mt-2"><?= e($x['deskripsi']) ?></p><?php if(!empty($x['rating_count'])): ?><p class="text-xs mt-3"><span class="stars" aria-hidden="true">★</span> <b class="text-ink"><?= number_format((float)$x['rating_avg'],1,',','.') ?></b> <span class="text-slate-500">(<?= (int)$x['rating_count'] ?> ulasan)</span></p><?php endif; ?><div class="border-t mt-5 pt-4 flex justify-between"><b class="text-sm text-ink"><?= rupiah($x['harga_mulai']) ?></b><a class="text-link" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$x['id'] ?>">Lihat detail →</a></div></article><?php endforeach; ?></div>
-<?php if(!$items): ?><div class="empty-state mt-6">Belum ada jasa yang dipublikasikan.</div><?php endif; ?></main>
-<?php require __DIR__.'/includes/footer.php'; ?>
+<main class="max-w-6xl mx-auto px-5 py-16 min-h-[65vh]">
+    <p class="eyebrow">Bursa jasa lokal</p>
+    <h1 class="text-4xl font-extrabold text-ink mt-3">Temukan talenta untuk kebutuhanmu.</h1>
+    <p class="text-sm text-slate-500 mt-3">Jasa mikro dari talenta lokal yang siap membantu bisnis dan proyekmu bertumbuh.</p>
+
+    <div class="filter-bar">
+        <input class="form-control" data-filter-search placeholder="Cari jasa, skill, atau talenta...">
+        <select class="form-control" data-filter-category>
+            <option value="">Semua kategori</option>
+            <?php foreach (['Desain', 'Konten', 'Teknologi', 'Administrasi'] as $c): ?>
+                <option><?= e($c) ?></option>
+            <?php endforeach; ?>
+        </select>
+        <input class="form-control" data-filter-location placeholder="Semua lokasi">
+        <span class="self-center text-xs text-slate-500">Filter otomatis</span>
+    </div>
+
+    <div class="card-grid">
+        <?php foreach ($items as $x): ?>
+            <article class="job-card" data-listing-card data-search="<?= e($x['nama_jasa'] . ' ' . $x['pekerja'] . ' ' . $x['deskripsi']) ?>" data-category="<?= e($x['kategori']) ?>" data-location="<?= e($x['lokasi']) ?>">
+                <div class="flex items-center gap-3">
+                    <div class="avatar"><?= e(strtoupper(substr($x['pekerja'], 0, 1))) ?></div>
+                    <div>
+                        <b class="text-sm text-ink"><?= e($x['pekerja']) ?></b>
+                        <p class="text-xs text-slate-500"><?= e($x['lokasi']) ?></p>
+                    </div>
+                    <?php if ($x['is_verified']): ?>
+                        <span class="badge-green ml-auto">Terverifikasi</span>
+                    <?php endif; ?>
+                </div>
+
+                <p class="eyebrow mt-6"><?= e($x['kategori']) ?></p>
+                <h2 class="font-bold text-ink mt-2"><?= e($x['nama_jasa']) ?></h2>
+                <p class="text-xs text-slate-500 leading-6 mt-2"><?= e($x['deskripsi']) ?></p>
+
+                <?php if (!empty($x['rating_count'])): ?>
+                    <p class="text-xs mt-3">
+                        <span class="stars" aria-hidden="true">★</span>
+                        <b class="text-ink"><?= number_format((float)$x['rating_avg'], 1, ',', '.') ?></b>
+                        <span class="text-slate-500">(<?= (int)$x['rating_count'] ?> ulasan)</span>
+                    </p>
+                <?php endif; ?>
+
+                <div class="border-t mt-5 pt-4 flex justify-between">
+                    <b class="text-sm text-ink"><?= rupiah($x['harga_mulai']) ?></b>
+                    <a class="text-link" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$x['id'] ?>">Lihat detail →</a>
+                </div>
+            </article>
+        <?php endforeach; ?>
+    </div>
+
+    <?php if (!$items): ?>
+        <div class="empty-state mt-6">Belum ada jasa yang dipublikasikan.</div>
+    <?php endif; ?>
+</main>
+<?php require __DIR__ . '/includes/footer.php'; ?>
