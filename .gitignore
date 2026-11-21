@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Editor / local preview
 palette-preview.html
 
@@ -12,3 +13,6 @@ palette-preview.html
 # Local secrets / merchant credentials
 /config/midtrans.local.php
 /config/manual-payment.php
+=======
+palette-preview.html
+>>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a

@@ -920,6 +920,7 @@ body[data-theme="dark"] .badge-amber {
     flex-direction: column;
   }
 }
+<<<<<<< HEAD
 
 /* ===== Tahap 3: pesanan jasa, chat, notifikasi, ulasan ===== */
 .nav-badge {
@@ -1411,3 +1412,5 @@ body[data-theme="dark"] .deal-confirmed { background: #123b31; color: #bbf7d0; }
  .nav-more-menu { position: static; min-width: 0; margin-top: 6px; box-shadow: none; border-radius: 10px; }
  .nav-links .theme-toggle, .nav-links .nav-cta { align-self: stretch; justify-content: center; }
 }
+=======
+>>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a
