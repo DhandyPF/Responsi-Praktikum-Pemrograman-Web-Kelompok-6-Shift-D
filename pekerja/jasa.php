@@ -4,12 +4,8 @@ $user=current_user();$error='';
 if($_SERVER['REQUEST_METHOD']==='POST'){verify_csrf();
  if(isset($_POST['delete'])){$stmt=$pdo->prepare('DELETE FROM jasa WHERE id=:id AND pekerja_id=:user');$stmt->execute(['id'=>(int)$_POST['delete'],'user'=>(int)$user['id']]);}
  else{$nama=trim($_POST['nama_jasa']??'');$lokasi=trim($_POST['lokasi']??'');$deskripsi=trim($_POST['deskripsi']??'');
-<<<<<<< HEAD
   $kategoriIn=$_POST['kategori']??'Lainnya';if(!in_array($kategoriIn,['Desain','Konten','Teknologi','Administrasi','Lainnya'],true))$kategoriIn='Lainnya';
   if($nama===''||$lokasi===''||$deskripsi===''){$error='Nama jasa, lokasi, dan deskripsi wajib diisi.';}else{$stmt=$pdo->prepare('INSERT INTO jasa (pekerja_id,nama_jasa,kategori,lokasi,harga_mulai,deskripsi) VALUES (:user,:nama,:kategori,:lokasi,:harga,:deskripsi)');$stmt->execute(['user'=>(int)$user['id'],'nama'=>$nama,'kategori'=>$kategoriIn,'lokasi'=>$lokasi,'harga'=>(float)($_POST['harga_mulai']?:0),'deskripsi'=>$deskripsi]);}}
-=======
-  if($nama===''||$lokasi===''||$deskripsi===''){$error='Nama jasa, lokasi, dan deskripsi wajib diisi.';}else{$stmt=$pdo->prepare('INSERT INTO jasa (pekerja_id,nama_jasa,kategori,lokasi,harga_mulai,deskripsi) VALUES (:user,:nama,:kategori,:lokasi,:harga,:deskripsi)');$stmt->execute(['user'=>(int)$user['id'],'nama'=>$nama,'kategori'=>$_POST['kategori']??'Lainnya','lokasi'=>$lokasi,'harga'=>(float)($_POST['harga_mulai']?:0),'deskripsi'=>$deskripsi]);}}
->>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a
  if($error==='')redirect('/pekerja/jasa.php');
 }
 $stmt=$pdo->prepare('SELECT * FROM jasa WHERE pekerja_id=:user ORDER BY created_at DESC');$stmt->execute(['user'=>(int)$user['id']]);$items=$stmt->fetchAll();
