@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/config/koneksi.php'; require_once __DIR__ . '/config/functions.php';
 try{$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified,(SELECT AVG(r.rating) FROM ulasan r WHERE r.jasa_id=j.id) rating_avg,(SELECT COUNT(*) FROM ulasan r WHERE r.jasa_id=j.id) rating_count FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
-catch(PDOException $e){error_log('jasa rating: '.$e->getMessage());$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
+catch(mysqli_sql_exception $e){error_log('jasa rating: '.$e->getMessage());$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
 $pageTitle='Marketplace Jasa'; require __DIR__.'/includes/header.php';
 ?>
 <main class="max-w-6xl mx-auto px-5 py-16 min-h-[65vh]"><p class="eyebrow">Bursa jasa lokal</p><h1 class="text-4xl font-extrabold text-ink mt-3">Temukan talenta untuk kebutuhanmu.</h1><p class="text-sm text-slate-500 mt-3">Jasa mikro dari talenta lokal yang siap membantu bisnis dan proyekmu bertumbuh.</p>

@@ -38,13 +38,13 @@ Fitur pendukung yang terintegrasi meliputi notifikasi, rating/ulasan, pengiriman
 | 3. CSS | Stylesheet eksternal `assets/css/style.css`, selector tag/class/id, layout, warna, tipografi, jarak, border, dan styling form. |
 | 4. JavaScript | Event klik dan input, filter daftar, toggle navigasi/tema, konfirmasi tindakan, kalkulasi estimasi upah, dan interaksi chat. |
 | 5. PHP | Variabel, tipe data, array, operator, percabangan, perulangan, fungsi, `include/require`, pemrosesan form, dan validasi sisi server. |
-| 6. PHP CRUD | Koneksi PDO dan operasi tambah, baca, ubah, serta hapus pada data aplikasi seperti lowongan, jasa, portfolio, paket, dan pengelolaan data terkait. |
+| 6. PHP CRUD | Koneksi MySQLi dan operasi tambah, baca, ubah, serta hapus pada data aplikasi seperti lowongan, jasa, portfolio, paket, dan pengelolaan data terkait. |
 
 ## Teknologi
 
 - PHP Native 8.1+ (disarankan PHP 8.2+)
 - MySQL 8+ atau MariaDB melalui XAMPP
-- PDO dan prepared statements
+- MySQLi dan prepared statements
 - HTML5, CSS, Tailwind CSS CDN, dan JavaScript Vanilla
 - Midtrans Snap untuk pembayaran online (opsional, perlu kredensial akun sendiri)
 
@@ -66,7 +66,7 @@ Fitur pendukung yang terintegrasi meliputi notifikasi, rating/ulasan, pengiriman
 1. Pasang XAMPP dengan PHP 8.1+ dan MySQL/MariaDB.
 2. Letakkan folder proyek di `C:\xampp\htdocs\nusakarya`.
 3. Jalankan Apache dan MySQL dari XAMPP.
-4. Buat/import database melalui phpMyAdmin dengan mengimpor `database.sql` pada database kosong. File tersebut adalah skema lengkap untuk instalasi baru.
+4. Buat database baru bernama `db_nusakarya`, lalu import `database.sql` pada database kosong. File tersebut adalah skema lengkap untuk instalasi baru. Jangan mengimpor ulang ke database yang sebelumnya sudah pernah diproses sebagian; jika database lama perlu dipertahankan, ekspor/backup dahulu dan lakukan migrasi terencana. Skrip menggunakan nama foreign key khusus `fk_nk_final_*` agar tidak bertabrakan dengan constraint bernama sama di tabel lain.
 5. Periksa pengaturan koneksi pada `config/koneksi.php` (default XAMPP: host `localhost`, database `db_nusakarya`, user `root`, password kosong).
 6. Periksa `BASE_URL` pada `config/app.php`; nilai default adalah `/nusakarya`.
 7. Pastikan `uploads/portfolio` dan `uploads/payments` dapat ditulisi Apache. Pertahankan file `.htaccess` di dalam folder upload.
@@ -107,7 +107,7 @@ Gunakan akun demo untuk memeriksa alur utama:
 
 ## Keamanan dan Catatan
 
-- Query database menggunakan PDO prepared statements.
+- Query database menggunakan MySQLi prepared statements. Adapter di `config/database.php` mengubah placeholder bernama seperti `:email` menjadi placeholder `?` yang didukung MySQLi.
 - Form yang mengubah data menggunakan token CSRF dan validasi server.
 - Halaman dan data dibatasi berdasarkan role serta kepemilikan pengguna.
 - Output teks di-escape sebelum ditampilkan.

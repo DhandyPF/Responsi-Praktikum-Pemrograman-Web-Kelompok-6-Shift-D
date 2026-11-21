@@ -1,0 +1,2 @@
+Jumlah file PHP: 58
+Syntax error: 0

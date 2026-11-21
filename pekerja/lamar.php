@@ -26,11 +26,8 @@ if ($check->fetch()) {
 
 $insert = $pdo->prepare('INSERT INTO lamaran (lowongan_id,pekerja_id,pesan_singkat,status) VALUES (:lowongan,:pekerja,NULL,"Menunggu")');
 $insert->execute(['lowongan' => $lowonganId, 'pekerja' => (int)$user['id']]);
-<<<<<<< HEAD
 $applicationId = (int)$pdo->lastInsertId();
 $history = $pdo->prepare('INSERT INTO riwayat_lamaran (lamaran_id,status_sebelumnya,status_terbaru,catatan,diubah_oleh) VALUES (?,?,?,?,NULL)');
 $history->execute([$applicationId, 'Menunggu', 'Menunggu', 'Lamaran dikirim',]);
-=======
->>>>>>> 38a6edc132918b2e2690d8b63f3870f9c182e20a
 flash('success', 'Lamaran berhasil dikirim.');
 redirect('/pekerja/lamaran.php');

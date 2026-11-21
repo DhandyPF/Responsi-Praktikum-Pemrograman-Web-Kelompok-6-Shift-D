@@ -31,7 +31,7 @@ function delete_portfolio_image(?string $name): void {
     $path = dirname(__DIR__) . '/uploads/portfolio/' . $name;
     if (is_file($path)) @unlink($path);
 }
-function record_application_status(PDO $pdo, int $applicationId, string $newStatus, ?string $note, int $providerId): bool {
+function record_application_status(Database $pdo, int $applicationId, string $newStatus, ?string $note, int $providerId): bool {
     $pdo->beginTransaction();
     try {
         $q = $pdo->prepare('SELECT l.status FROM lamaran l JOIN lowongan lo ON lo.id=l.lowongan_id WHERE l.id=? AND lo.penyedia_id=? FOR UPDATE');

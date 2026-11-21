@@ -20,4 +20,4 @@ foreach ($q->fetchAll() as $m) {
 }
 $r = $pdo->prepare('SELECT id FROM pesan WHERE percakapan_id=? AND pengirim_id=? AND dibaca_at IS NOT NULL ORDER BY id DESC LIMIT 200');
 $r->execute([$convId, $uid]);
-echo json_encode(['messages' => $out, 'read_ids' => array_map('intval', $r->fetchAll(PDO::FETCH_COLUMN))], JSON_UNESCAPED_UNICODE);
+echo json_encode(['messages' => $out, 'read_ids' => array_map('intval', $r->fetchAll(0))], JSON_UNESCAPED_UNICODE);

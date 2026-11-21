@@ -8,7 +8,7 @@ require_once __DIR__ . '/functions.php';
  * Pemetaan peran: "pembeli" = akun role `penyedia` (UMKM/usaha yang memesan jasa),
  * "pekerja" = akun role `pekerja` (pemilik jasa). Role admin tidak ikut chat/pesanan.
  *
- * Catatan PDO: koneksi memakai ATTR_EMULATE_PREPARES=false, sehingga satu named
+ * Catatan database: koneksi memakai ATTR_EMULATE_PREPARES=false, sehingga satu named
  * placeholder tidak boleh dipakai dua kali dalam satu query. Karena itu seluruh query
  * di sini memakai placeholder posisi (?).
  */
@@ -18,7 +18,7 @@ const ORDER_STATUSES = ['Menunggu', 'Dikonfirmasi', 'Dikerjakan', 'Selesai', 'Di
 /* ---------- Umum ---------- */
 
 function is_duplicate_key(Throwable $e): bool {
-    return $e instanceof PDOException && (string)$e->getCode() === '23000';
+    return $e instanceof mysqli_sql_exception && (string)$e->getCode() === '23000';
 }
 
 function time_ago_label(?string $datetime): string {
@@ -35,7 +35,7 @@ function safe_internal_path(?string $path): ?string {
 
 /* ---------- Notifikasi ---------- */
 
-function notify(PDO $pdo, int $userId, string $type, string $title, string $body, ?string $link = null): void {
+function notify(Database $pdo, int $userId, string $type, string $title, string $body, ?string $link = null): void {
     $body = mb_substr($body, 0, 500);
     $title = mb_substr($title, 0, 160);
     if ($type === 'pesan' && $link !== null) {
@@ -53,7 +53,7 @@ function notify(PDO $pdo, int $userId, string $type, string $title, string $body
     $i->execute([$userId, $type, $title, $body, $link]);
 }
 
-function unread_notification_count(PDO $pdo, int $userId): int {
+function unread_notification_count(Database $pdo, int $userId): int {
     try {
         $q = $pdo->prepare('SELECT COUNT(*) FROM notifikasi WHERE user_id=? AND dibaca_at IS NULL');
         $q->execute([$userId]);
@@ -64,7 +64,7 @@ function unread_notification_count(PDO $pdo, int $userId): int {
     }
 }
 
-function unread_message_count(PDO $pdo, int $userId): int {
+function unread_message_count(Database $pdo, int $userId): int {
     try {
         $q = $pdo->prepare('SELECT COUNT(*) FROM pesan p JOIN percakapan c ON c.id=p.percakapan_id WHERE (c.pembeli_id=? OR c.pekerja_id=?) AND p.pengirim_id<>? AND p.dibaca_at IS NULL');
         $q->execute([$userId, $userId, $userId]);
@@ -108,7 +108,7 @@ function order_allowed_transitions(string $role, string $status): array {
 }
 
 /** @throws RuntimeException pesan galat aman ditampilkan ke pengguna */
-function create_order(PDO $pdo, int $buyerId, int $jasaId, string $note, ?string $needDate): int {
+function create_order(Database $pdo, int $buyerId, int $jasaId, string $note, ?string $needDate): int {
     if (mb_strlen($note) > 2000) throw new RuntimeException('Catatan pesanan maksimal 2.000 karakter.');
     if ($needDate !== null && $needDate !== '') {
         $d = DateTime::createFromFormat('Y-m-d', $needDate);
@@ -147,7 +147,7 @@ function create_order(PDO $pdo, int $buyerId, int $jasaId, string $note, ?string
  * Dikunci dengan SELECT ... FOR UPDATE agar dua perubahan bersamaan tidak saling menimpa.
  * @return array{0:bool,1:string} [berhasil, pesan]
  */
-function change_order_status(PDO $pdo, int $orderId, string $newStatus, int $actorId, string $actorRole, string $note): array {
+function change_order_status(Database $pdo, int $orderId, string $newStatus, int $actorId, string $actorRole, string $note): array {
     if (!in_array($newStatus, ORDER_STATUSES, true)) return [false, 'Status tidak valid.'];
     if (mb_strlen($note) > 1000) return [false, 'Catatan maksimal 1.000 karakter.'];
     if (!in_array($actorRole, ['pekerja', 'penyedia'], true)) return [false, 'Peran tidak diizinkan.'];
@@ -190,7 +190,7 @@ function change_order_status(PDO $pdo, int $orderId, string $newStatus, int $act
 }
 
 /** Ambil pesanan milik pengguna (sebagai pembeli atau pekerja). null jika bukan miliknya. */
-function fetch_order_for_user(PDO $pdo, int $orderId, int $userId, string $role): ?array {
+function fetch_order_for_user(Database $pdo, int $orderId, int $userId, string $role): ?array {
     $col = $role === 'pekerja' ? 'o.pekerja_id' : 'o.pembeli_id';
     $q = $pdo->prepare("SELECT o.*, b.nama AS nama_pembeli, w.nama AS nama_pekerja, r.id AS ulasan_id, r.rating, r.komentar, r.created_at AS ulasan_at
         FROM pesanan o
@@ -202,7 +202,7 @@ function fetch_order_for_user(PDO $pdo, int $orderId, int $userId, string $role)
     return $q->fetch() ?: null;
 }
 
-function fetch_order_history(PDO $pdo, int $orderId): array {
+function fetch_order_history(Database $pdo, int $orderId): array {
     $q = $pdo->prepare('SELECT r.*, u.nama AS pengubah FROM riwayat_pesanan r LEFT JOIN users u ON u.id=r.diubah_oleh WHERE r.pesanan_id=? ORDER BY r.id DESC');
     $q->execute([$orderId]);
     return $q->fetchAll();
@@ -211,7 +211,7 @@ function fetch_order_history(PDO $pdo, int $orderId): array {
 /* ---------- Ulasan ---------- */
 
 /** @throws RuntimeException pesan galat aman ditampilkan ke pengguna */
-function submit_review(PDO $pdo, int $orderId, int $buyerId, $rating, string $comment): void {
+function submit_review(Database $pdo, int $orderId, int $buyerId, $rating, string $comment): void {
     $rating = filter_var($rating, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 5]]);
     if ($rating === false) throw new RuntimeException('Rating harus berupa angka 1 sampai 5.');
     if (mb_strlen($comment) > 1500) throw new RuntimeException('Komentar maksimal 1.500 karakter.');
@@ -228,7 +228,7 @@ function submit_review(PDO $pdo, int $orderId, int $buyerId, $rating, string $co
         $i = $pdo->prepare('INSERT INTO ulasan (pesanan_id,jasa_id,pembeli_id,pekerja_id,rating,komentar) VALUES (?,?,?,?,?,?)');
         try {
             $i->execute([$orderId, $order['jasa_id'] !== null ? (int)$order['jasa_id'] : null, $buyerId, (int)$order['pekerja_id'], $rating, $comment !== '' ? $comment : null]);
-        } catch (PDOException $e) {
+        } catch (mysqli_sql_exception $e) {
             if (is_duplicate_key($e)) throw new RuntimeException('Pesanan ini sudah diulas.');
             throw $e;
         }
@@ -245,7 +245,7 @@ function submit_review(PDO $pdo, int $orderId, int $buyerId, $rating, string $co
 }
 
 /** @return array{avg:float,count:int} */
-function jasa_rating_summary(PDO $pdo, int $jasaId): array {
+function jasa_rating_summary(Database $pdo, int $jasaId): array {
     $q = $pdo->prepare('SELECT COUNT(*) AS n, AVG(rating) AS a FROM ulasan WHERE jasa_id=?');
     $q->execute([$jasaId]);
     $r = $q->fetch();
@@ -260,7 +260,7 @@ function stars_html(float $rating): string {
 /* ---------- Chat ---------- */
 
 /** Peran lawan bicara harus kebalikan: satu pembeli (penyedia) dan satu pekerja. */
-function get_or_create_conversation(PDO $pdo, int $buyerId, int $workerId, ?int $jasaId = null): int {
+function get_or_create_conversation(Database $pdo, int $buyerId, int $workerId, ?int $jasaId = null): int {
     $q = $pdo->prepare('SELECT id FROM percakapan WHERE pembeli_id=? AND pekerja_id=? LIMIT 1');
     $q->execute([$buyerId, $workerId]);
     $id = $q->fetchColumn();
@@ -269,7 +269,7 @@ function get_or_create_conversation(PDO $pdo, int $buyerId, int $workerId, ?int 
         $i = $pdo->prepare('INSERT INTO percakapan (pembeli_id,pekerja_id,jasa_id) VALUES (?,?,?)');
         $i->execute([$buyerId, $workerId, $jasaId]);
         return (int)$pdo->lastInsertId();
-    } catch (PDOException $e) {
+    } catch (mysqli_sql_exception $e) {
         if (!is_duplicate_key($e)) throw $e;
         $q->execute([$buyerId, $workerId]);
         return (int)$q->fetchColumn();
@@ -277,7 +277,7 @@ function get_or_create_conversation(PDO $pdo, int $buyerId, int $workerId, ?int 
 }
 
 /** Percakapan hanya terlihat oleh dua pesertanya. null jika bukan peserta / tidak ada. */
-function conversation_for_user(PDO $pdo, int $convId, int $userId): ?array {
+function conversation_for_user(Database $pdo, int $convId, int $userId): ?array {
     $q = $pdo->prepare('SELECT c.*, ub.nama AS nama_pembeli, uw.nama AS nama_pekerja FROM percakapan c JOIN users ub ON ub.id=c.pembeli_id JOIN users uw ON uw.id=c.pekerja_id WHERE c.id=? AND (c.pembeli_id=? OR c.pekerja_id=?) LIMIT 1');
     $q->execute([$convId, $userId, $userId]);
     $c = $q->fetch();
@@ -288,7 +288,7 @@ function conversation_for_user(PDO $pdo, int $convId, int $userId): ?array {
 }
 
 /** @throws RuntimeException */
-function send_message(PDO $pdo, array $conversation, int $senderId, string $text): int {
+function send_message(Database $pdo, array $conversation, int $senderId, string $text): int {
     $text = trim($text);
     if ($text === '') throw new RuntimeException('Pesan tidak boleh kosong.');
     if (mb_strlen($text) > 2000) throw new RuntimeException('Pesan maksimal 2.000 karakter.');
@@ -316,7 +316,7 @@ function send_message(PDO $pdo, array $conversation, int $senderId, string $text
 }
 
 /** Tandai pesan lawan bicara sebagai terbaca + notifikasi pesan percakapan ini. */
-function mark_conversation_read(PDO $pdo, int $convId, int $userId): void {
+function mark_conversation_read(Database $pdo, int $convId, int $userId): void {
     $u = $pdo->prepare('UPDATE pesan SET dibaca_at=CURRENT_TIMESTAMP WHERE percakapan_id=? AND pengirim_id<>? AND dibaca_at IS NULL');
     $u->execute([$convId, $userId]);
     $n = $pdo->prepare("UPDATE notifikasi SET dibaca_at=CURRENT_TIMESTAMP WHERE user_id=? AND tipe='pesan' AND tautan=? AND dibaca_at IS NULL");
@@ -324,7 +324,7 @@ function mark_conversation_read(PDO $pdo, int $convId, int $userId): void {
 }
 
 /** Pembeli = role penyedia. Jalur chat selalu pembeli ↔ pekerja. */
-function chat_pair_for(array $user, int $otherId, PDO $pdo): ?array {
+function chat_pair_for(array $user, int $otherId, Database $pdo): ?array {
     $q = $pdo->prepare('SELECT id,role FROM users WHERE id=? LIMIT 1');
     $q->execute([$otherId]);
     $other = $q->fetch();

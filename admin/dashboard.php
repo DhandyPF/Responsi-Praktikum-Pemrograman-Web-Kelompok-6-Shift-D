@@ -5,7 +5,7 @@ require_login('admin');
 $counts=[];
 foreach (['users'=>'Pengguna','lowongan'=>'Lowongan','jasa'=>'Jasa','lamaran'=>'Lamaran','pelatihan'=>'Pelatihan'] as $table=>$label) { $counts[$table]=(int)$pdo->query("SELECT COUNT(*) FROM `$table`")->fetchColumn(); }
 $pesananTotal=0;$ulasanTotal=0;
-try{$pesananTotal=(int)$pdo->query('SELECT COUNT(*) FROM pesanan')->fetchColumn();$ulasanTotal=(int)$pdo->query('SELECT COUNT(*) FROM ulasan')->fetchColumn();}catch(PDOException $e){error_log('admin tahap3: '.$e->getMessage());}
+try{$pesananTotal=(int)$pdo->query('SELECT COUNT(*) FROM pesanan')->fetchColumn();$ulasanTotal=(int)$pdo->query('SELECT COUNT(*) FROM ulasan')->fetchColumn();}catch(mysqli_sql_exception $e){error_log('admin tahap3: '.$e->getMessage());}
 $pending=(int)$pdo->query("SELECT COUNT(*) FROM users WHERE role='penyedia' AND is_verified=0")->fetchColumn();
 $pageTitle='Dashboard Admin'; require __DIR__ . '/../includes/header.php';
 ?>
