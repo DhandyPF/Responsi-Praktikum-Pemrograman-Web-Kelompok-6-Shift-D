@@ -1,4 +1,75 @@
 <?php
-require_once __DIR__.'/../config/koneksi.php';require_once __DIR__.'/../config/tahap4.php';require_login('penyedia');
-if($_SERVER['REQUEST_METHOD']!=='POST')redirect('/marketplace.php');verify_csrf();$u=current_user();$jid=(int)($_POST['jasa_id']??0);$note=trim((string)($_POST['catatan']??''));
-try{if($jid<1||mb_strlen($note)>2000)throw new RuntimeException('Permintaan tidak valid.');$pdo->beginTransaction();$q=$pdo->prepare("SELECT j.*,u.id pemilik FROM jasa j JOIN users u ON u.id=j.pekerja_id WHERE j.id=? AND j.status_publikasi='Aktif' FOR UPDATE");$q->execute([$jid]);$j=$q->fetch();if(!$j)throw new RuntimeException('Jasa tidak tersedia.');if((int)$j['pekerja_id']===(int)$u['id'])throw new RuntimeException('Kamu tidak dapat memesan jasa sendiri.');$code='NK-'.date('ymd').'-'.strtoupper(bin2hex(random_bytes(4)));$i=$pdo->prepare("INSERT INTO pesanan (kode_pesanan,pembeli_id,pekerja_id,jasa_id,nama_jasa,harga,harga_disepakati,catatan,status,status_pembayaran,status_pekerjaan) VALUES (?,?,?,?,?,?,?,?,'Menunggu','Belum Ditagihkan','Menunggu Konfirmasi')");$i->execute([$code,$u['id'],$j['pekerja_id'],$jid,$j['nama_jasa'],$j['harga_mulai'],$j['harga_mulai'],$note?:null]);$oid=(int)$pdo->lastInsertId();$h=$pdo->prepare("INSERT INTO riwayat_pesanan (pesanan_id,status_sebelumnya,status_terbaru,catatan,diubah_oleh) VALUES (?,NULL,'Menunggu','Permintaan pesanan jasa dibuat',?)");$h->execute([$oid,$u['id']]);notify($pdo,(int)$j['pekerja_id'],'pesanan','Permintaan pesanan baru',$u['nama'].' meminta jasa '.$j['nama_jasa'],'/pekerja/tahap4-pesanan.php?id='.$oid);t4_audit($pdo,(int)$u['id'],'order.created','pesanan',$oid,['jasa_id'=>$jid]);$pdo->commit();t4_flash_redirect('Permintaan pesanan terkirim. Tunggu penawaran dari pekerja.','/penyedia/tahap4-pesanan.php?id='.$oid);}catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();flash('error',$e instanceof RuntimeException?$e->getMessage():'Pesanan gagal dibuat.');error_log('order service: '.$e->getMessage());redirect('/detail-jasa.php?id='.$jid);}
+require_once __DIR__ . "/../config/koneksi.php";
+require_once __DIR__ . "/../config/tahap4.php";
+require_login("penyedia");
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    redirect("/marketplace.php");
+}
+verify_csrf();
+$u = current_user();
+$jid = (int) ($_POST["jasa_id"] ?? 0);
+$note = trim((string) ($_POST["catatan"] ?? ""));
+try {
+    if ($jid < 1 || mb_strlen($note) > 2000) {
+        throw new RuntimeException("Permintaan tidak valid.");
+    }
+    $pdo->beginTransaction();
+    $q = $pdo->prepare(
+        "SELECT j.*,u.id pemilik FROM jasa j JOIN users u ON u.id=j.pekerja_id WHERE j.id=? AND j.status_publikasi='Aktif' FOR UPDATE",
+    );
+    $q->execute([$jid]);
+    $j = $q->fetch();
+    if (!$j) {
+        throw new RuntimeException("Jasa tidak tersedia.");
+    }
+    if ((int) $j["pekerja_id"] === (int) $u["id"]) {
+        throw new RuntimeException("Kamu tidak dapat memesan jasa sendiri.");
+    }
+    $code = "NK-" . date("ymd") . "-" . strtoupper(bin2hex(random_bytes(4)));
+    $i = $pdo->prepare(
+        "INSERT INTO pesanan (kode_pesanan,pembeli_id,pekerja_id,jasa_id,nama_jasa,harga,harga_disepakati,catatan,status,status_pembayaran,status_pekerjaan) VALUES (?,?,?,?,?,?,?,?,'Menunggu','Belum Ditagihkan','Menunggu Konfirmasi')",
+    );
+    $i->execute([
+        $code,
+        $u["id"],
+        $j["pekerja_id"],
+        $jid,
+        $j["nama_jasa"],
+        $j["harga_mulai"],
+        $j["harga_mulai"],
+        $note ?: null,
+    ]);
+    $oid = (int) $pdo->lastInsertId();
+    $h = $pdo->prepare(
+        "INSERT INTO riwayat_pesanan (pesanan_id,status_sebelumnya,status_terbaru,catatan,diubah_oleh) VALUES (?,NULL,'Menunggu','Permintaan pesanan jasa dibuat',?)",
+    );
+    $h->execute([$oid, $u["id"]]);
+    notify(
+        $pdo,
+        (int) $j["pekerja_id"],
+        "pesanan",
+        "Permintaan pesanan baru",
+        $u["nama"] . " meminta jasa " . $j["nama_jasa"],
+        "/pekerja/tahap4-pesanan.php?id=" . $oid,
+    );
+    t4_audit($pdo, (int) $u["id"], "order.created", "pesanan", $oid, [
+        "jasa_id" => $jid,
+    ]);
+    $pdo->commit();
+    t4_flash_redirect(
+        "Permintaan pesanan terkirim. Tunggu penawaran dari pekerja.",
+        "/penyedia/tahap4-pesanan.php?id=" . $oid,
+    );
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    flash(
+        "error",
+        $e instanceof RuntimeException
+            ? $e->getMessage()
+            : "Pesanan gagal dibuat.",
+    );
+    error_log("order service: " . $e->getMessage());
+    redirect("/detail-jasa.php?id=" . $jid);
+}
