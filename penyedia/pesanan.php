@@ -37,11 +37,11 @@ require __DIR__ . '/../includes/header.php';
     <p class="text-sm text-slate-500 mt-2">Pantau jasa yang kamu pesan dari talenta lokal.</p>
 
     <?php if ($success): ?>
-        <div class="alert alert-success"><?= e($success) ?></div>
+    <div class="alert alert-success"><?= e($success) ?></div>
     <?php endif; ?>
 
     <?php if ($errorMsg): ?>
-        <div class="alert alert-error"><?= e($errorMsg) ?></div>
+    <div class="alert alert-error"><?= e($errorMsg) ?></div>
     <?php endif; ?>
 
     <section class="dashboard-panel">
@@ -53,44 +53,47 @@ require __DIR__ . '/../includes/header.php';
         <div class="status-tabs" role="navigation" aria-label="Filter status">
             <a class="<?= $filter === '' ? 'active' : '' ?>" href="?">Semua</a>
             <?php foreach (ORDER_STATUSES as $s): ?>
-                <a class="<?= $filter === $s ? 'active' : '' ?>" href="?status=<?= e($s) ?>"><?= e($s) ?></a>
+            <a class="<?= $filter === $s ? 'active' : '' ?>" href="?status=<?= e($s) ?>"><?= e($s) ?></a>
             <?php endforeach; ?>
         </div>
 
         <?php if ($items): ?>
-            <div class="table-wrapper" role="region" aria-label="Daftar pesanan" tabindex="0">
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Jasa</th>
-                            <th>Pekerja</th>
-                            <th>Harga</th>
-                            <th>Tanggal</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($items as $x): ?>
-                            <tr>
-                                <th>
-                                    <a class="text-link" href="<?= BASE_URL ?>/penyedia/pesanan-detail.php?id=<?= (int)$x['id'] ?>">#<?= (int)$x['id'] ?> · <?= e($x['nama_jasa']) ?></a>
-                                    <?php if ($x['status'] === 'Selesai' && $x['rating'] === null): ?>
-                                        <small>Belum diulas</small>
-                                    <?php endif; ?>
-                                </th>
-                                <td><?= e($x['nama_pekerja']) ?></td>
-                                <td><?= rupiah($x['harga']) ?></td>
-                                <td><?= e(date('d M Y', strtotime($x['created_at']))) ?></td>
-                                <td>
-                                    <span class="<?= order_status_badge($x['status']) ?>"><?= e($x['status']) ?></span>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-wrapper" role="region" aria-label="Daftar pesanan" tabindex="0">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Jasa</th>
+                        <th>Pekerja</th>
+                        <th>Harga</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($items as $x): ?>
+                    <tr>
+                        <th>
+                            <a class="text-link"
+                                href="<?= BASE_URL ?>/penyedia/pesanan-detail.php?id=<?= (int)$x['id'] ?>">#<?= (int)$x['id'] ?>
+                                · <?= e($x['nama_jasa']) ?></a>
+                            <?php if ($x['status'] === 'Selesai' && $x['rating'] === null): ?>
+                            <small>Belum diulas</small>
+                            <?php endif; ?>
+                        </th>
+                        <td><?= e($x['nama_pekerja']) ?></td>
+                        <td><?= rupiah($x['harga']) ?></td>
+                        <td><?= e(date('d M Y', strtotime($x['created_at']))) ?></td>
+                        <td>
+                            <span class="<?= order_status_badge($x['status']) ?>"><?= e($x['status']) ?></span>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
         <?php else: ?>
-            <div class="empty-state mt-4">Belum ada pesanan<?= $filter !== '' ? ' dengan status ' . e($filter) : '' ?>. Jelajahi marketplace jasa untuk mulai memesan.</div>
+        <div class="empty-state mt-4">Belum ada pesanan<?= $filter !== '' ? ' dengan status ' . e($filter) : '' ?>.
+            Jelajahi marketplace jasa untuk mulai memesan.</div>
         <?php endif; ?>
     </section>
 </main>

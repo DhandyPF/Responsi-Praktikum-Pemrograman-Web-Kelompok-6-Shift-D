@@ -58,79 +58,86 @@ require __DIR__ . '/includes/header.php';
                 <p class="text-sm text-slate-500 mt-2">
                     Oleh <?= e($service['pekerja']) ?>
                     <?php if ($service['is_verified']): ?>
-                        · Akun terverifikasi
+                    · Akun terverifikasi
                     <?php endif; ?>
                 </p>
-                <p class="mt-3 text-sm">★ <?= number_format((float)$rating['avg'], 1) ?> · <?= (int)$rating['count'] ?> ulasan</p>
+                <p class="mt-3 text-sm">★ <?= number_format((float)$rating['avg'], 1) ?> · <?= (int)$rating['count'] ?>
+                    ulasan</p>
 
                 <h2 class="font-bold text-xl mt-8">Tentang jasa</h2>
                 <p class="whitespace-pre-line leading-7 mt-3"><?= e($service['deskripsi']) ?></p>
 
                 <?php if ($service['deskripsi_pekerja']): ?>
-                    <p class="mt-4 text-sm text-slate-500"><?= e($service['deskripsi_pekerja']) ?></p>
+                <p class="mt-4 text-sm text-slate-500"><?= e($service['deskripsi_pekerja']) ?></p>
                 <?php endif; ?>
 
                 <?php if ($service['skills']): ?>
-                    <p class="mt-3 text-sm"><b>Keahlian:</b> <?= e($service['skills']) ?></p>
+                <p class="mt-3 text-sm"><b>Keahlian:</b> <?= e($service['skills']) ?></p>
                 <?php endif; ?>
             </article>
 
             <aside class="bg-slate-50 rounded-xl p-5 h-fit">
                 <p class="text-xs text-slate-500">Harga mulai</p>
-                <b class="text-2xl text-ink"><?= rupiah($packages ? min(array_column($packages, 'harga')) : $service['harga_mulai']) ?></b>
+                <b
+                    class="text-2xl text-ink"><?= rupiah($packages ? min(array_column($packages, 'harga')) : $service['harga_mulai']) ?></b>
                 <p class="text-sm text-slate-500 mt-3">Pilih paket atau ajukan penawaran harga custom melalui chat.</p>
 
                 <?php if ($user && $user['role'] === 'pekerja' && (int)$user['id'] === (int)$service['pekerja_id']): ?>
-                    <a class="btn-primary mt-4 block text-center" href="<?= BASE_URL ?>/pekerja/paket-jasa.php">Kelola jasa</a>
+                <a class="btn-primary mt-4 block text-center" href="<?= BASE_URL ?>/pekerja/paket-jasa.php">Kelola
+                    jasa</a>
                 <?php elseif (!$user): ?>
-                    <a class="btn-primary mt-4 block text-center" href="<?= BASE_URL ?>/auth/login.php">Masuk untuk memesan</a>
+                <a class="btn-primary mt-4 block text-center" href="<?= BASE_URL ?>/auth/login.php">Masuk untuk
+                    memesan</a>
                 <?php elseif ($user['role'] === 'penyedia'): ?>
-                    <form method="post" action="<?= BASE_URL ?>/pesan/mulai.php" class="mt-4">
-                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                        <input type="hidden" name="jasa_id" value="<?= $id ?>">
-                        <button class="btn-secondary w-full">Negosiasikan harga via chat</button>
-                    </form>
+                <form method="post" action="<?= BASE_URL ?>/pesan/mulai.php" class="mt-4">
+                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="jasa_id" value="<?= $id ?>">
+                    <button class="btn-secondary w-full">Negosiasikan harga via chat</button>
+                </form>
                 <?php endif; ?>
             </aside>
         </div>
 
         <h2 class="font-bold text-xl mt-10 mb-4">Pilih paket layanan</h2>
         <?php if ($packages): ?>
-            <div class="grid md:grid-cols-3 gap-4">
-                <?php foreach ($packages as $p): ?>
-                    <article class="border rounded-xl p-5 flex flex-col">
-                        <p class="eyebrow"><?= e($p['nama_paket']) ?></p>
-                        <h3 class="font-bold text-lg mt-2"><?= e($p['judul_paket']) ?></h3>
-                        <b class="text-2xl mt-3"><?= rupiah($p['harga']) ?></b>
-                        <p class="text-sm text-slate-500 mt-2"><?= (int)$p['estimasi_hari'] ?> hari · <?= (int)$p['jumlah_revisi'] ?> revisi</p>
-                        <p class="text-sm whitespace-pre-line mt-4 flex-1"><?= e($p['deskripsi']) ?></p>
+        <div class="grid md:grid-cols-3 gap-4">
+            <?php foreach ($packages as $p): ?>
+            <article class="border rounded-xl p-5 flex flex-col">
+                <p class="eyebrow"><?= e($p['nama_paket']) ?></p>
+                <h3 class="font-bold text-lg mt-2"><?= e($p['judul_paket']) ?></h3>
+                <b class="text-2xl mt-3"><?= rupiah($p['harga']) ?></b>
+                <p class="text-sm text-slate-500 mt-2"><?= (int)$p['estimasi_hari'] ?> hari ·
+                    <?= (int)$p['jumlah_revisi'] ?> revisi</p>
+                <p class="text-sm whitespace-pre-line mt-4 flex-1"><?= e($p['deskripsi']) ?></p>
 
-                        <?php if ($user && $user['role'] === 'penyedia'): ?>
-                            <form method="post" action="<?= BASE_URL ?>/penyedia/pesan-paket.php" class="mt-5">
-                                <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                                <input type="hidden" name="paket_id" value="<?= (int)$p['id'] ?>">
-                                <textarea class="form-control mb-2" name="catatan" maxlength="2000" rows="2" placeholder="Catatan kebutuhan (opsional)"></textarea>
-                                <button class="btn-primary w-full">Pesan paket ini</button>
-                            </form>
-                        <?php elseif (!$user): ?>
-                            <a class="btn-primary mt-5 text-center" href="<?= BASE_URL ?>/auth/login.php">Masuk untuk memesan</a>
-                        <?php endif; ?>
-                    </article>
-                <?php endforeach; ?>
-            </div>
+                <?php if ($user && $user['role'] === 'penyedia'): ?>
+                <form method="post" action="<?= BASE_URL ?>/penyedia/pesan-paket.php" class="mt-5">
+                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="paket_id" value="<?= (int)$p['id'] ?>">
+                    <textarea class="form-control mb-2" name="catatan" maxlength="2000" rows="2"
+                        placeholder="Catatan kebutuhan (opsional)"></textarea>
+                    <button class="btn-primary w-full">Pesan paket ini</button>
+                </form>
+                <?php elseif (!$user): ?>
+                <a class="btn-primary mt-5 text-center" href="<?= BASE_URL ?>/auth/login.php">Masuk untuk memesan</a>
+                <?php endif; ?>
+            </article>
+            <?php endforeach; ?>
+        </div>
         <?php else: ?>
-            <div class="empty-state">Pekerja belum menambahkan paket. Silakan hubungi melalui chat untuk meminta penawaran custom.</div>
+        <div class="empty-state">Pekerja belum menambahkan paket. Silakan hubungi melalui chat untuk meminta penawaran
+            custom.</div>
         <?php endif; ?>
 
         <h2 class="font-bold text-xl mt-10 mb-4">Rating &amp; ulasan</h2>
         <?php foreach ($reviews as $r): ?>
-            <div class="border-t py-3">
-                <b>★ <?= (int)$r['rating'] ?>/5 · <?= e($r['pembeli']) ?></b>
-                <p class="text-sm mt-1"><?= e($r['komentar'] ?? '') ?></p>
-            </div>
+        <div class="border-t py-3">
+            <b>★ <?= (int)$r['rating'] ?>/5 · <?= e($r['pembeli']) ?></b>
+            <p class="text-sm mt-1"><?= e($r['komentar'] ?? '') ?></p>
+        </div>
         <?php endforeach; ?>
         <?php if (!$reviews): ?>
-            <p class="text-sm text-slate-500">Belum ada ulasan.</p>
+        <p class="text-sm text-slate-500">Belum ada ulasan.</p>
         <?php endif; ?>
     </section>
 </main>

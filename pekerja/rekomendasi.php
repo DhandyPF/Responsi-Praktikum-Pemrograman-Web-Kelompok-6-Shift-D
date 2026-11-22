@@ -29,5 +29,50 @@ foreach($jobs as &$job){$m=match_score($job,$user,$skills);$job['match']=$m;}uns
 usort($jobs,fn($a,$b)=>$b['match']['score']<=>$a['match']['score']);
 $pageTitle='Rekomendasi Pekerjaan';require __DIR__.'/../includes/header.php';
 ?>
-<main class="dashboard-main"><p class="eyebrow">Pekerja / talenta</p><h1 class="dashboard-title">Smart Job Matching</h1><p class="text-sm text-slate-500 mt-3">Skor transparan dari skill (45%), lokasi (20%), kategori (20%), dan kata kunci deskripsi (15%). Lowongan aktif dinilai menggunakan data profilmu.</p>
-<section class="dashboard-panel mt-5"><h2>Peluang paling relevan</h2><?php if($jobs):?><div class="space-y-4 mt-4"><?php foreach($jobs as $x):?><article class="surface-card p-5"><div class="flex flex-wrap justify-between gap-3"><div><p class="text-xs text-slate-500"><?=e($x['penyedia'])?> · <?=e($x['lokasi'])?></p><h3 class="font-bold text-ink mt-1"><?=e($x['judul'])?></h3><p class="text-xs text-slate-500 mt-1"><?=e($x['kategori'])?> · <?=e($x['jenis_pekerjaan'])?></p></div><div class="text-right"><b class="text-2xl text-teal"><?=($x['match']['score'])?>%</b><p class="text-xs text-slate-500">kecocokan</p></div></div><div class="w-full h-2 rounded-full bg-slate-100 mt-4"><div class="h-2 rounded-full bg-teal" style="width:<?=$x['match']['score']?>%"></div></div><p class="font-semibold text-sm mt-4">Mengapa direkomendasikan?</p><ul class="list-disc pl-5 text-sm mt-2 space-y-1"><?php foreach($x['match']['reasons'] as $reason):?><li><?=e($reason)?></li><?php endforeach?></ul><details class="text-xs text-slate-500 mt-3"><summary class="cursor-pointer">Rincian perhitungan skor</summary><div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2"><?php foreach($x['match']['parts'] as $label=>$value):?><div class="bg-slate-50 rounded-lg p-2"><?=e($label)?>: <b><?=round($value)?>/100</b></div><?php endforeach?></div></details><div class="border-t mt-4 pt-4 flex flex-wrap justify-between gap-3"><b class="text-sm text-ink"><?=rupiah($x['gaji_min'])?>–<?=rupiah($x['gaji_max'])?></b><div class="flex gap-4"><a class="text-link" href="<?=BASE_URL?>/detail-lowongan.php?id=<?=(int)$x['id']?>">Detail</a><form method="post" action="<?=BASE_URL?>/pekerja/lamar.php"><input type="hidden" name="_csrf" value="<?=e(csrf_token())?>"><input type="hidden" name="lowongan_id" value="<?=(int)$x['id']?>"><button class="text-link" type="submit">Lamar →</button></form></div></div></article><?php endforeach?></div><?php else:?><div class="empty-state mt-4">Belum ada lowongan aktif yang sesuai untuk ditampilkan.</div><?php endif?></section></main><?php require __DIR__.'/../includes/footer.php';?>
+<main class="dashboard-main">
+    <p class="eyebrow">Pekerja / talenta</p>
+    <h1 class="dashboard-title">Smart Job Matching</h1>
+    <p class="text-sm text-slate-500 mt-3">Skor transparan dari skill (45%), lokasi (20%), kategori (20%), dan kata
+        kunci deskripsi (15%). Lowongan aktif dinilai menggunakan data profilmu.</p>
+    <section class="dashboard-panel mt-5">
+        <h2>Peluang paling relevan</h2><?php if($jobs):?><div class="space-y-4 mt-4"><?php foreach($jobs as $x):?>
+            <article class="surface-card p-5">
+                <div class="flex flex-wrap justify-between gap-3">
+                    <div>
+                        <p class="text-xs text-slate-500"><?=e($x['penyedia'])?> · <?=e($x['lokasi'])?></p>
+                        <h3 class="font-bold text-ink mt-1"><?=e($x['judul'])?></h3>
+                        <p class="text-xs text-slate-500 mt-1"><?=e($x['kategori'])?> · <?=e($x['jenis_pekerjaan'])?>
+                        </p>
+                    </div>
+                    <div class="text-right"><b class="text-2xl text-teal"><?=($x['match']['score'])?>%</b>
+                        <p class="text-xs text-slate-500">kecocokan</p>
+                    </div>
+                </div>
+                <div class="w-full h-2 rounded-full bg-slate-100 mt-4">
+                    <div class="h-2 rounded-full bg-teal" style="width:<?=$x['match']['score']?>%"></div>
+                </div>
+                <p class="font-semibold text-sm mt-4">Mengapa direkomendasikan?</p>
+                <ul class="list-disc pl-5 text-sm mt-2 space-y-1"><?php foreach($x['match']['reasons'] as $reason):?>
+                    <li><?=e($reason)?></li><?php endforeach?>
+                </ul>
+                <details class="text-xs text-slate-500 mt-3">
+                    <summary class="cursor-pointer">Rincian perhitungan skor</summary>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                        <?php foreach($x['match']['parts'] as $label=>$value):?><div class="bg-slate-50 rounded-lg p-2">
+                            <?=e($label)?>: <b><?=round($value)?>/100</b></div><?php endforeach?></div>
+                </details>
+                <div class="border-t mt-4 pt-4 flex flex-wrap justify-between gap-3"><b
+                        class="text-sm text-ink"><?=rupiah($x['gaji_min'])?>–<?=rupiah($x['gaji_max'])?></b>
+                    <div class="flex gap-4"><a class="text-link"
+                            href="<?=BASE_URL?>/detail-lowongan.php?id=<?=(int)$x['id']?>">Detail</a>
+                        <form method="post" action="<?=BASE_URL?>/pekerja/lamar.php"><input type="hidden" name="_csrf"
+                                value="<?=e(csrf_token())?>"><input type="hidden" name="lowongan_id"
+                                value="<?=(int)$x['id']?>"><button class="text-link" type="submit">Lamar →</button>
+                        </form>
+                    </div>
+                </div>
+            </article><?php endforeach?>
+        </div><?php else:?><div class="empty-state mt-4">Belum ada lowongan aktif yang
+            sesuai untuk ditampilkan.</div><?php endif?>
+    </section>
+</main><?php require __DIR__.'/../includes/footer.php';?>

@@ -52,18 +52,18 @@ require __DIR__ . '/includes/header.php';
     <h1 class="dashboard-title">Notifikasi</h1>
 
     <?php if ($success): ?>
-        <div class="alert alert-success"><?= e($success) ?></div>
+    <div class="alert alert-success"><?= e($success) ?></div>
     <?php endif; ?>
 
     <section class="dashboard-panel">
         <div class="flex flex-wrap justify-between items-center gap-3">
             <h2><?= $unread ?> belum dibaca</h2>
             <?php if ($unread > 0): ?>
-                <form method="post">
-                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                    <input type="hidden" name="action" value="read_all">
-                    <button class="btn-secondary" type="submit">Tandai semua sudah dibaca</button>
-                </form>
+            <form method="post">
+                <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                <input type="hidden" name="action" value="read_all">
+                <button class="btn-secondary" type="submit">Tandai semua sudah dibaca</button>
+            </form>
             <?php endif; ?>
         </div>
 
@@ -73,45 +73,46 @@ require __DIR__ . '/includes/header.php';
         </div>
 
         <?php if ($items): ?>
-            <ul class="notif-list">
-                <?php foreach ($items as $n):
+        <ul class="notif-list">
+            <?php foreach ($items as $n):
                     $isNew = $n['dibaca_at'] === null;
                     $to = safe_internal_path($n['tautan']);
                 ?>
-                    <li class="notif-item <?= $isNew ? 'unread' : '' ?>">
-                        <span class="notif-icon" aria-hidden="true"><?= $icons[$n['tipe']] ?? '🔔' ?></span>
-                        <div class="notif-body">
-                            <b class="text-ink"><?= e($n['judul']) ?></b>
-                            <?php if ($isNew): ?>
-                                <span class="badge-amber">Baru</span>
-                            <?php endif; ?>
-                            <p class="text-sm mt-1"><?= e($n['isi']) ?></p>
-                            <p class="text-xs text-slate-500 mt-1"><?= e(time_ago_label($n['created_at'])) ?></p>
-                        </div>
-                        <div class="notif-actions">
-                            <?php if ($to !== null): ?>
-                                <form method="post">
-                                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                                    <input type="hidden" name="action" value="open">
-                                    <input type="hidden" name="id" value="<?= (int)$n['id'] ?>">
-                                    <button class="text-link" type="submit">Buka →</button>
-                                </form>
-                            <?php endif; ?>
-                            <?php if ($isNew): ?>
-                                <form method="post">
-                                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                                    <input type="hidden" name="action" value="read">
-                                    <input type="hidden" name="id" value="<?= (int)$n['id'] ?>">
-                                    <input type="hidden" name="filter" value="<?= $onlyUnread ? 'belum' : '' ?>">
-                                    <button class="text-link" type="submit">Tandai dibaca</button>
-                                </form>
-                            <?php endif; ?>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+            <li class="notif-item <?= $isNew ? 'unread' : '' ?>">
+                <span class="notif-icon" aria-hidden="true"><?= $icons[$n['tipe']] ?? '🔔' ?></span>
+                <div class="notif-body">
+                    <b class="text-ink"><?= e($n['judul']) ?></b>
+                    <?php if ($isNew): ?>
+                    <span class="badge-amber">Baru</span>
+                    <?php endif; ?>
+                    <p class="text-sm mt-1"><?= e($n['isi']) ?></p>
+                    <p class="text-xs text-slate-500 mt-1"><?= e(time_ago_label($n['created_at'])) ?></p>
+                </div>
+                <div class="notif-actions">
+                    <?php if ($to !== null): ?>
+                    <form method="post">
+                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                        <input type="hidden" name="action" value="open">
+                        <input type="hidden" name="id" value="<?= (int)$n['id'] ?>">
+                        <button class="text-link" type="submit">Buka →</button>
+                    </form>
+                    <?php endif; ?>
+                    <?php if ($isNew): ?>
+                    <form method="post">
+                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                        <input type="hidden" name="action" value="read">
+                        <input type="hidden" name="id" value="<?= (int)$n['id'] ?>">
+                        <input type="hidden" name="filter" value="<?= $onlyUnread ? 'belum' : '' ?>">
+                        <button class="text-link" type="submit">Tandai dibaca</button>
+                    </form>
+                    <?php endif; ?>
+                </div>
+            </li>
+            <?php endforeach; ?>
+        </ul>
         <?php else: ?>
-            <div class="empty-state mt-4"><?= $onlyUnread ? 'Tidak ada notifikasi yang belum dibaca.' : 'Belum ada notifikasi.' ?></div>
+        <div class="empty-state mt-4">
+            <?= $onlyUnread ? 'Tidak ada notifikasi yang belum dibaca.' : 'Belum ada notifikasi.' ?></div>
         <?php endif; ?>
     </section>
 </main>

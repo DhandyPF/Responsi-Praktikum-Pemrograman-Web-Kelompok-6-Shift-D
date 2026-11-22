@@ -81,7 +81,7 @@ require __DIR__ . '/../includes/header.php';
     <h1 class="dashboard-title">Dompet &amp; pencairan</h1>
 
     <?php if ($err): ?>
-        <div class="alert alert-error mb-4"><?= e($err) ?></div>
+    <div class="alert alert-error mb-4"><?= e($err) ?></div>
     <?php endif; ?>
 
     <div class="grid sm:grid-cols-3 gap-4 mb-6">
@@ -102,16 +102,19 @@ require __DIR__ . '/../includes/header.php';
     <div class="grid lg:grid-cols-2 gap-6">
         <section class="dashboard-panel">
             <h2 class="font-bold text-xl mb-3">Ajukan pencairan</h2>
-            <p class="text-sm text-slate-500 mb-4">Dana tersedia setelah pembeli menyetujui hasil pekerjaan. Pencairan ditransfer admin ke rekening yang kamu daftarkan.</p>
+            <p class="text-sm text-slate-500 mb-4">Dana tersedia setelah pembeli menyetujui hasil pekerjaan. Pencairan
+                ditransfer admin ke rekening yang kamu daftarkan.</p>
             <form method="post" class="space-y-3">
                 <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
 
                 <label class="block text-sm">Jumlah pencairan
-                    <input class="form-control mt-1" type="number" name="jumlah" min="10000" step="1000" max="<?= e((string)$wallet['saldo_tersedia']) ?>" required>
+                    <input class="form-control mt-1" type="number" name="jumlah" min="10000" step="1000"
+                        max="<?= e((string)$wallet['saldo_tersedia']) ?>" required>
                 </label>
 
                 <label class="block text-sm">Bank / penyedia rekening
-                    <input class="form-control mt-1" name="nama_bank" placeholder="BCA / BRI / Mandiri / e-wallet" required>
+                    <input class="form-control mt-1" name="nama_bank" placeholder="BCA / BRI / Mandiri / e-wallet"
+                        required>
                 </label>
 
                 <label class="block text-sm">Nomor rekening / akun
@@ -122,26 +125,28 @@ require __DIR__ . '/../includes/header.php';
                     <input class="form-control mt-1" name="nama_pemilik_rekening" required>
                 </label>
 
-                <button class="btn-primary" <?= ((float)$wallet['saldo_tersedia'] < 10000) ? 'disabled' : '' ?>>Ajukan pencairan</button>
+                <button class="btn-primary" <?= ((float)$wallet['saldo_tersedia'] < 10000) ? 'disabled' : '' ?>>Ajukan
+                    pencairan</button>
             </form>
         </section>
 
         <section class="dashboard-panel">
             <h2 class="font-bold text-xl mb-3">Riwayat pencairan</h2>
             <?php foreach ($payouts as $p): ?>
-                <article class="border-b py-3">
-                    <div class="flex justify-between gap-2">
-                        <b class="text-sm"><?= e($p['kode_pencairan']) ?></b>
-                        <span class="text-xs"><?= e($p['status']) ?></span>
-                    </div>
-                    <p class="text-sm mt-1"><?= rupiah($p['jumlah']) ?> · <?= e($p['nama_bank']) ?> · <?= e($p['nomor_rekening']) ?></p>
-                    <?php if ($p['catatan_admin']): ?>
-                        <p class="text-xs text-slate-500 mt-1"><?= e($p['catatan_admin']) ?></p>
-                    <?php endif; ?>
-                </article>
+            <article class="border-b py-3">
+                <div class="flex justify-between gap-2">
+                    <b class="text-sm"><?= e($p['kode_pencairan']) ?></b>
+                    <span class="text-xs"><?= e($p['status']) ?></span>
+                </div>
+                <p class="text-sm mt-1"><?= rupiah($p['jumlah']) ?> · <?= e($p['nama_bank']) ?> ·
+                    <?= e($p['nomor_rekening']) ?></p>
+                <?php if ($p['catatan_admin']): ?>
+                <p class="text-xs text-slate-500 mt-1"><?= e($p['catatan_admin']) ?></p>
+                <?php endif; ?>
+            </article>
             <?php endforeach; ?>
             <?php if (!$payouts): ?>
-                <p class="empty-state">Belum ada permintaan pencairan.</p>
+            <p class="empty-state">Belum ada permintaan pencairan.</p>
             <?php endif; ?>
         </section>
     </div>
@@ -149,21 +154,21 @@ require __DIR__ . '/../includes/header.php';
     <section class="dashboard-panel mt-6">
         <h2 class="font-bold text-xl mb-3">Mutasi saldo</h2>
         <?php foreach ($ledger as $l): ?>
-            <div class="flex flex-wrap justify-between gap-2 border-b py-3">
-                <div>
-                    <b class="text-sm"><?= e($l['jenis']) ?></b>
-                    <p class="text-xs text-slate-500"><?= e($l['keterangan'] ?? '') ?> · <?= e($l['created_at']) ?></p>
-                </div>
-                <div class="text-right">
-                    <b class="<?= ($l['arah'] === 'Masuk' ? 'text-emerald-700' : 'text-slate-700') ?>">
-                        <?= $l['arah'] === 'Masuk' ? '+' : '−' ?><?= rupiah($l['jumlah']) ?>
-                    </b>
-                    <p class="text-xs text-slate-500">Saldo tersedia: <?= rupiah($l['saldo_setelah']) ?></p>
-                </div>
+        <div class="flex flex-wrap justify-between gap-2 border-b py-3">
+            <div>
+                <b class="text-sm"><?= e($l['jenis']) ?></b>
+                <p class="text-xs text-slate-500"><?= e($l['keterangan'] ?? '') ?> · <?= e($l['created_at']) ?></p>
             </div>
+            <div class="text-right">
+                <b class="<?= ($l['arah'] === 'Masuk' ? 'text-emerald-700' : 'text-slate-700') ?>">
+                    <?= $l['arah'] === 'Masuk' ? '+' : '−' ?><?= rupiah($l['jumlah']) ?>
+                </b>
+                <p class="text-xs text-slate-500">Saldo tersedia: <?= rupiah($l['saldo_setelah']) ?></p>
+            </div>
+        </div>
         <?php endforeach; ?>
         <?php if (!$ledger): ?>
-            <p class="empty-state">Belum ada mutasi saldo.</p>
+        <p class="empty-state">Belum ada mutasi saldo.</p>
         <?php endif; ?>
     </section>
 </main>

@@ -54,11 +54,11 @@ require __DIR__ . '/../includes/header.php';
     <h1 class="dashboard-title">Pesanan #<?= (int)$order['id'] ?></h1>
 
     <?php if ($success): ?>
-        <div class="alert alert-success"><?= e($success) ?></div>
+    <div class="alert alert-success"><?= e($success) ?></div>
     <?php endif; ?>
 
     <?php if ($error): ?>
-        <div class="alert alert-error" role="alert"><?= e($error) ?></div>
+    <div class="alert alert-error" role="alert"><?= e($error) ?></div>
     <?php endif; ?>
 
     <section class="dashboard-panel mt-5">
@@ -81,7 +81,8 @@ require __DIR__ . '/../includes/header.php';
             </div>
             <div class="p-4 rounded-xl info-tile">
                 <p class="text-xs text-slate-500">Dibutuhkan paling lambat</p>
-                <b class="block text-ink mt-2"><?= $order['tanggal_dibutuhkan'] ? e(date('d M Y', strtotime($order['tanggal_dibutuhkan']))) : 'Fleksibel' ?></b>
+                <b
+                    class="block text-ink mt-2"><?= $order['tanggal_dibutuhkan'] ? e(date('d M Y', strtotime($order['tanggal_dibutuhkan']))) : 'Fleksibel' ?></b>
             </div>
         </div>
 
@@ -95,77 +96,85 @@ require __DIR__ . '/../includes/header.php';
                 <button class="btn-secondary" type="submit">💬 Kirim pesan ke pekerja</button>
             </form>
             <?php if ($order['jasa_id']): ?>
-                <a class="btn-secondary" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$order['jasa_id'] ?>">Lihat halaman jasa</a>
+            <a class="btn-secondary" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$order['jasa_id'] ?>">Lihat
+                halaman jasa</a>
             <?php endif; ?>
         </div>
     </section>
 
     <?php if ($canCancel): ?>
-        <section class="dashboard-panel mt-6">
-            <h2>Batalkan pesanan</h2>
-            <p class="text-xs text-slate-500 mt-2">Pesanan hanya dapat dibatalkan saat berstatus Menunggu atau Dikonfirmasi (sebelum mulai dikerjakan).</p>
-            <form method="post" class="grid md:grid-cols-[2fr_auto] gap-3 mt-4" data-confirm="Batalkan pesanan ini?">
-                <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                <input type="hidden" name="action" value="cancel">
-                <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
+    <section class="dashboard-panel mt-6">
+        <h2>Batalkan pesanan</h2>
+        <p class="text-xs text-slate-500 mt-2">Pesanan hanya dapat dibatalkan saat berstatus Menunggu atau Dikonfirmasi
+            (sebelum mulai dikerjakan).</p>
+        <form method="post" class="grid md:grid-cols-[2fr_auto] gap-3 mt-4" data-confirm="Batalkan pesanan ini?">
+            <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="action" value="cancel">
+            <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
 
-                <div>
-                    <label class="form-label" for="catatan">Alasan pembatalan (opsional)</label>
-                    <input class="form-control" id="catatan" name="catatan" maxlength="1000">
-                </div>
+            <div>
+                <label class="form-label" for="catatan">Alasan pembatalan (opsional)</label>
+                <input class="form-control" id="catatan" name="catatan" maxlength="1000">
+            </div>
 
-                <div class="flex items-end">
-                    <button class="btn-primary danger-btn" type="submit">Batalkan pesanan</button>
-                </div>
-            </form>
-        </section>
+            <div class="flex items-end">
+                <button class="btn-primary danger-btn" type="submit">Batalkan pesanan</button>
+            </div>
+        </form>
+    </section>
     <?php endif; ?>
 
     <?php if ($order['status'] === 'Selesai'): ?>
-        <section class="dashboard-panel mt-6">
-            <h2>Rating &amp; ulasan</h2>
-            <?php if ($order['ulasan_id'] !== null): ?>
-                <p class="mt-3"><?= stars_html((float)$order['rating']) ?> <b class="text-ink"><?= (int)$order['rating'] ?>/5</b></p>
-                <p class="text-sm mt-2"><?= nl2br(e($order['komentar'] ?: 'Tanpa komentar.')) ?></p>
-                <p class="text-xs text-slate-500 mt-2">Diulas pada <?= e(time_ago_label($order['ulasan_at'])) ?>. Satu pesanan hanya dapat diulas satu kali.</p>
-            <?php elseif ($canReview): ?>
-                <form method="post" class="mt-4">
-                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                    <input type="hidden" name="action" value="review">
-                    <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
+    <section class="dashboard-panel mt-6">
+        <h2>Rating &amp; ulasan</h2>
+        <?php if ($order['ulasan_id'] !== null): ?>
+        <p class="mt-3"><?= stars_html((float)$order['rating']) ?> <b
+                class="text-ink"><?= (int)$order['rating'] ?>/5</b></p>
+        <p class="text-sm mt-2"><?= nl2br(e($order['komentar'] ?: 'Tanpa komentar.')) ?></p>
+        <p class="text-xs text-slate-500 mt-2">Diulas pada <?= e(time_ago_label($order['ulasan_at'])) ?>. Satu pesanan
+            hanya dapat diulas satu kali.</p>
+        <?php elseif ($canReview): ?>
+        <form method="post" class="mt-4">
+            <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="action" value="review">
+            <input type="hidden" name="id" value="<?= (int)$order['id'] ?>">
 
-                    <fieldset>
-                        <legend class="form-label">Rating *</legend>
-                        <div class="rating-input">
-                            <?php for ($i = 5; $i >= 1; $i--): ?>
-                                <input type="radio" id="rate<?= $i ?>" name="rating" value="<?= $i ?>" required>
-                                <label for="rate<?= $i ?>" title="<?= $i ?> bintang">
-                                    <span class="sr-only"><?= $i ?> bintang</span>★
-                                </label>
-                            <?php endfor; ?>
-                        </div>
-                    </fieldset>
+            <fieldset>
+                <legend class="form-label">Rating *</legend>
+                <div class="rating-input">
+                    <?php for ($i = 5; $i >= 1; $i--): ?>
+                    <input type="radio" id="rate<?= $i ?>" name="rating" value="<?= $i ?>" required>
+                    <label for="rate<?= $i ?>" title="<?= $i ?> bintang">
+                        <span class="sr-only"><?= $i ?> bintang</span>★
+                    </label>
+                    <?php endfor; ?>
+                </div>
+            </fieldset>
 
-                    <label class="form-label mt-4" for="komentar">Komentar (opsional)</label>
-                    <textarea class="form-control" id="komentar" name="komentar" rows="4" maxlength="1500" placeholder="Ceritakan pengalamanmu menggunakan jasa ini"></textarea>
+            <label class="form-label mt-4" for="komentar">Komentar (opsional)</label>
+            <textarea class="form-control" id="komentar" name="komentar" rows="4" maxlength="1500"
+                placeholder="Ceritakan pengalamanmu menggunakan jasa ini"></textarea>
 
-                    <button class="btn-primary mt-4" type="submit">Kirim ulasan</button>
-                </form>
-            <?php endif; ?>
-        </section>
+            <button class="btn-primary mt-4" type="submit">Kirim ulasan</button>
+        </form>
+        <?php endif; ?>
+    </section>
     <?php endif; ?>
 
     <section class="dashboard-panel mt-6">
         <h2>Riwayat status</h2>
         <ol class="mt-4 space-y-4">
             <?php foreach ($history as $h): ?>
-                <li class="border-l-2 border-teal pl-4">
-                    <p class="font-semibold text-ink"><?= $h['status_sebelumnya'] ? e($h['status_sebelumnya']) . ' → ' : '' ?><?= e($h['status_terbaru']) ?></p>
-                    <p class="text-xs text-slate-500 mt-1"><?= e(time_ago_label($h['created_at'])) ?> · <?= e($h['pengubah'] ?? 'Sistem') ?></p>
-                    <?php if ($h['catatan']): ?>
-                        <p class="text-sm mt-2"><?= nl2br(e($h['catatan'])) ?></p>
-                    <?php endif; ?>
-                </li>
+            <li class="border-l-2 border-teal pl-4">
+                <p class="font-semibold text-ink">
+                    <?= $h['status_sebelumnya'] ? e($h['status_sebelumnya']) . ' → ' : '' ?><?= e($h['status_terbaru']) ?>
+                </p>
+                <p class="text-xs text-slate-500 mt-1"><?= e(time_ago_label($h['created_at'])) ?> ·
+                    <?= e($h['pengubah'] ?? 'Sistem') ?></p>
+                <?php if ($h['catatan']): ?>
+                <p class="text-sm mt-2"><?= nl2br(e($h['catatan'])) ?></p>
+                <?php endif; ?>
+            </li>
             <?php endforeach; ?>
         </ol>
     </section>

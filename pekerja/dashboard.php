@@ -95,7 +95,8 @@ require __DIR__ . '/../includes/header.php';
         </a>
         <div class="surface-card p-5">
             <p class="text-xs text-slate-500">Rating rata-rata</p>
-            <strong class="block text-3xl text-ink mt-2"><?= $reviewCount ? number_format($reviewAvg, 1, ',', '.') . ' ★' : '–' ?></strong>
+            <strong
+                class="block text-3xl text-ink mt-2"><?= $reviewCount ? number_format($reviewAvg, 1, ',', '.') . ' ★' : '–' ?></strong>
             <p class="text-xs text-slate-500 mt-1"><?= $reviewCount ?> ulasan</p>
         </div>
     </section>
@@ -131,7 +132,8 @@ require __DIR__ . '/../includes/header.php';
                 <p class="text-xs text-slate-500 mt-2">Chat dengan pembeli jasa.</p>
             </a>
             <a class="surface-card p-5" href="<?= BASE_URL ?>/notifikasi.php">
-                <b>Notifikasi<?php if ($unreadNotif): ?> <span class="nav-badge"><?= $unreadNotif ?></span><?php endif; ?></b>
+                <b>Notifikasi<?php if ($unreadNotif): ?> <span
+                        class="nav-badge"><?= $unreadNotif ?></span><?php endif; ?></b>
                 <p class="text-xs text-slate-500 mt-2">Pesan, pesanan, dan ulasan terbaru.</p>
             </a>
             <a class="surface-card p-5" href="<?= BASE_URL ?>/pekerja/rekomendasi.php">
@@ -144,32 +146,33 @@ require __DIR__ . '/../includes/header.php';
     <section class="dashboard-panel mt-6">
         <h2>Aktivitas lamaran terbaru</h2>
         <?php if ($recent): ?>
-            <div class="table-wrapper mt-4">
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Lowongan</th>
-                            <th>Penyedia</th>
-                            <th>Tanggal</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($recent as $item): ?>
-                            <tr>
-                                <th>
-                                    <a class="text-link" href="<?= BASE_URL ?>/detail-lowongan.php?id=<?= (int)$item['lowongan_id'] ?>"><?= e($item['judul']) ?></a>
-                                </th>
-                                <td><?= e($item['penyedia']) ?></td>
-                                <td><?= e(date('d M Y', strtotime($item['tanggal_lamar']))) ?></td>
-                                <td><?= e($item['status']) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-wrapper mt-4">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Lowongan</th>
+                        <th>Penyedia</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($recent as $item): ?>
+                    <tr>
+                        <th>
+                            <a class="text-link"
+                                href="<?= BASE_URL ?>/detail-lowongan.php?id=<?= (int)$item['lowongan_id'] ?>"><?= e($item['judul']) ?></a>
+                        </th>
+                        <td><?= e($item['penyedia']) ?></td>
+                        <td><?= e(date('d M Y', strtotime($item['tanggal_lamar']))) ?></td>
+                        <td><?= e($item['status']) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
         <?php else: ?>
-            <div class="empty-state mt-4">Kamu belum mengirim lamaran. Yuk, cari peluang pertamamu.</div>
+        <div class="empty-state mt-4">Kamu belum mengirim lamaran. Yuk, cari peluang pertamamu.</div>
         <?php endif; ?>
     </section>
 </main>

@@ -25,45 +25,46 @@ require __DIR__ . '/../includes/header.php';
     <section class="dashboard-panel">
         <h2>Pengguna terdaftar</h2>
         <?php if ($items): ?>
-            <div class="table-wrapper" role="region" aria-label="Daftar pengguna" tabindex="0">
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Peran</th>
-                            <th>Lokasi</th>
-                            <th>Verifikasi</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($items as $x): ?>
-                            <tr>
-                                <th>
-                                    <?= e($x['nama']) ?>
-                                    <small><?= e($x['email']) ?></small>
-                                </th>
-                                <td><?= e(ucfirst($x['role'])) ?></td>
-                                <td><?= e($x['lokasi'] ?: '-') ?></td>
-                                <td>
-                                    <span class="<?= $x['is_verified'] ? 'badge-green' : 'badge-amber' ?>">
-                                        <?= $x['is_verified'] ? 'Terverifikasi' : 'Belum validasi' ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <form method="post">
-                                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                                        <input type="hidden" name="id" value="<?= (int)$x['id'] ?>">
-                                        <button class="text-link" name="toggle" type="submit"><?= $x['is_verified'] ? 'Batalkan' : 'Verifikasi' ?></button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-wrapper" role="region" aria-label="Daftar pengguna" tabindex="0">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Peran</th>
+                        <th>Lokasi</th>
+                        <th>Verifikasi</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($items as $x): ?>
+                    <tr>
+                        <th>
+                            <?= e($x['nama']) ?>
+                            <small><?= e($x['email']) ?></small>
+                        </th>
+                        <td><?= e(ucfirst($x['role'])) ?></td>
+                        <td><?= e($x['lokasi'] ?: '-') ?></td>
+                        <td>
+                            <span class="<?= $x['is_verified'] ? 'badge-green' : 'badge-amber' ?>">
+                                <?= $x['is_verified'] ? 'Terverifikasi' : 'Belum validasi' ?>
+                            </span>
+                        </td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                                <input type="hidden" name="id" value="<?= (int)$x['id'] ?>">
+                                <button class="text-link" name="toggle"
+                                    type="submit"><?= $x['is_verified'] ? 'Batalkan' : 'Verifikasi' ?></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
         <?php else: ?>
-            <div class="empty-state">Belum ada pengguna terdaftar.</div>
+        <div class="empty-state">Belum ada pengguna terdaftar.</div>
         <?php endif; ?>
     </section>
 </main>
