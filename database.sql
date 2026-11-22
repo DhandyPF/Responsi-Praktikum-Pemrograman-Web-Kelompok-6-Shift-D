@@ -1,6 +1,9 @@
--- NUSAKARYA - DATABASE LENGKAP, DIPISAH PER JENIS QUERY
--- Jalankan section 1 sampai 5 secara berurutan pada database kosong.
--- Setiap section boleh di-copy dan dijalankan sendiri di tab SQL phpMyAdmin.
+-- NUSAKARYA - DATABASE LENGKAP UNTUK INSTALASI BARU
+-- Berisi skema dasar dan seluruh tabel/perubahan Tahap 2 sampai Tahap 4.5.
+-- Import satu kali pada database kosong melalui phpMyAdmin.
+
+-- NusaKarya database
+-- Import melalui phpMyAdmin / MySQL CLI.
 
 -- ============================================================
 -- SECTION 1: CREATE DATABASE, USE, SET NAMES
