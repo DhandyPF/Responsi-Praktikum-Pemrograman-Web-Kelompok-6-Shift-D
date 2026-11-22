@@ -1,5 +1,11 @@
 <?php
-require_once __DIR__.'/../config/koneksi.php';require_once __DIR__.'/../config/tahap4.php';require_login('admin');$u=current_user();$err='';
+require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/../config/tahap4.php';
+
+require_login('admin');
+$u = current_user();
+$err = '';
+
 // Hindari Fatal Error bila tabel transaksi belum dibuat oleh migrasi.
 $requiredT4=['aturan_komisi','invoice','komisi_transaksi','pembayaran','audit_log'];
 $missingT4=[];

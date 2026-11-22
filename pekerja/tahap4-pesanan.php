@@ -1,5 +1,11 @@
 <?php
-require_once __DIR__.'/../config/koneksi.php';require_once __DIR__.'/../config/tahap4.php';require_login('pekerja');$u=current_user();$err='';
+require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/../config/tahap4.php';
+
+require_login('pekerja');
+$u = current_user();
+$err = '';
+
 // Hindari Fatal Error bila migrasi Tahap 4 belum lengkap.
 $requiredT4=['penawaran','penawaran_riwayat','pengiriman_hasil','permintaan_revisi','audit_log'];
 $missingT4=[];

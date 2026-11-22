@@ -5,8 +5,11 @@
   const form = document.getElementById("chatForm");
   const box = document.getElementById("isi");
   let last = Number(log.dataset.last || 0);
-  const nearBottom = () => log.scrollHeight - log.scrollTop - log.clientHeight < 120;
-  const toBottom = () => { log.scrollTop = log.scrollHeight; };
+  const nearBottom = () =>
+    log.scrollHeight - log.scrollTop - log.clientHeight < 120;
+  const toBottom = () => {
+    log.scrollTop = log.scrollHeight;
+  };
   toBottom();
 
   const addMessage = (m) => {
@@ -38,11 +41,17 @@
     if (busy || document.hidden) return;
     busy = true;
     try {
-      const res = await fetch(log.dataset.url + "&after=" + last, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      const res = await fetch(log.dataset.url + "&after=" + last, {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+      });
       if (!res.ok) return;
       const data = await res.json();
       const stick = nearBottom();
-      (data.messages || []).forEach((m) => { addMessage(m); last = Math.max(last, m.id); });
+      (data.messages || []).forEach((m) => {
+        addMessage(m);
+        last = Math.max(last, m.id);
+      });
       (data.read_ids || []).forEach((id) => {
         const s = log.querySelector('[data-id="' + id + '"] .msg-status');
         if (s) s.textContent = "✓✓ Dibaca";
