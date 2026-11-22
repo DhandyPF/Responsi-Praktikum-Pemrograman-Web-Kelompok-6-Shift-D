@@ -75,52 +75,55 @@ require __DIR__ . '/../includes/header.php';
     <h1 class="dashboard-title">Pencairan pekerja</h1>
 
     <?php if ($err): ?>
-        <div class="alert alert-error mb-4"><?= e($err) ?></div>
+    <div class="alert alert-error mb-4"><?= e($err) ?></div>
     <?php endif; ?>
 
     <section class="dashboard-panel">
-        <p class="text-sm text-slate-500 mb-4">Admin melakukan transfer bank di luar aplikasi, lalu mencatat referensi transfer untuk menutup permintaan pencairan.</p>
+        <p class="text-sm text-slate-500 mb-4">Admin melakukan transfer bank di luar aplikasi, lalu mencatat referensi
+            transfer untuk menutup permintaan pencairan.</p>
 
         <?php foreach ($rows as $p): ?>
-            <article class="border rounded-xl p-4 mb-3">
-                <div class="flex flex-wrap justify-between gap-2">
-                    <div>
-                        <b><?= e($p['kode_pencairan']) ?> · <?= e($p['nama_pekerja']) ?></b>
-                        <p class="text-sm text-slate-500"><?= e($p['nama_bank']) ?> · <?= e($p['nomor_rekening']) ?> · <?= e($p['nama_pemilik_rekening']) ?></p>
-                    </div>
-                    <b><?= rupiah($p['jumlah']) ?></b>
+        <article class="border rounded-xl p-4 mb-3">
+            <div class="flex flex-wrap justify-between gap-2">
+                <div>
+                    <b><?= e($p['kode_pencairan']) ?> · <?= e($p['nama_pekerja']) ?></b>
+                    <p class="text-sm text-slate-500"><?= e($p['nama_bank']) ?> · <?= e($p['nomor_rekening']) ?> ·
+                        <?= e($p['nama_pemilik_rekening']) ?></p>
                 </div>
+                <b><?= rupiah($p['jumlah']) ?></b>
+            </div>
 
-                <p class="text-xs text-slate-500 mt-1">Status: <?= e($p['status']) ?> · <?= e($p['diminta_at']) ?></p>
-                <?php if ($p['referensi_transfer']): ?>
-                    <p class="text-xs mt-1">Referensi: <?= e($p['referensi_transfer']) ?></p>
-                <?php endif; ?>
+            <p class="text-xs text-slate-500 mt-1">Status: <?= e($p['status']) ?> · <?= e($p['diminta_at']) ?></p>
+            <?php if ($p['referensi_transfer']): ?>
+            <p class="text-xs mt-1">Referensi: <?= e($p['referensi_transfer']) ?></p>
+            <?php endif; ?>
 
-                <?php if (in_array($p['status'], ['Menunggu', 'Disetujui', 'Diproses'], true)): ?>
-                    <form method="post" class="mt-3 grid md:grid-cols-2 gap-2">
-                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                        <input type="hidden" name="payout_id" value="<?= (int)$p['id'] ?>">
-                        <input class="form-control" name="note" placeholder="Catatan admin (opsional)">
-                        <?php if ($p['status'] === 'Menunggu'): ?>
-                            <button class="btn-primary" name="action" value="approve">Setujui</button>
-                            <button class="btn-secondary" name="action" value="reject">Tolak &amp; kembalikan saldo</button>
-                        <?php elseif ($p['status'] === 'Disetujui'): ?>
-                            <button class="btn-primary" name="action" value="processing">Tandai sedang ditransfer</button>
-                            <button class="btn-secondary" name="action" value="failed">Gagal &amp; kembalikan saldo</button>
-                        <?php else: ?>
-                            <input class="form-control" name="reference" placeholder="Nomor referensi transfer" required>
-                            <button class="btn-primary" name="action" value="paid">Tandai transfer berhasil</button>
-                            <button class="btn-secondary" name="action" value="failed">Transfer gagal &amp; kembalikan saldo</button>
-                        <?php endif; ?>
-                    </form>
-                <?php elseif ($p['catatan_admin']): ?>
-                    <p class="text-sm text-slate-500 mt-2"><?= e($p['catatan_admin']) ?></p>
+            <?php if (in_array($p['status'], ['Menunggu', 'Disetujui', 'Diproses'], true)): ?>
+            <form method="post" class="mt-3 grid md:grid-cols-2 gap-2">
+                <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                <input type="hidden" name="payout_id" value="<?= (int)$p['id'] ?>">
+                <input class="form-control" name="note" placeholder="Catatan admin (opsional)">
+                <?php if ($p['status'] === 'Menunggu'): ?>
+                <button class="btn-primary" name="action" value="approve">Setujui</button>
+                <button class="btn-secondary" name="action" value="reject">Tolak &amp; kembalikan saldo</button>
+                <?php elseif ($p['status'] === 'Disetujui'): ?>
+                <button class="btn-primary" name="action" value="processing">Tandai sedang ditransfer</button>
+                <button class="btn-secondary" name="action" value="failed">Gagal &amp; kembalikan saldo</button>
+                <?php else: ?>
+                <input class="form-control" name="reference" placeholder="Nomor referensi transfer" required>
+                <button class="btn-primary" name="action" value="paid">Tandai transfer berhasil</button>
+                <button class="btn-secondary" name="action" value="failed">Transfer gagal &amp; kembalikan
+                    saldo</button>
                 <?php endif; ?>
-            </article>
+            </form>
+            <?php elseif ($p['catatan_admin']): ?>
+            <p class="text-sm text-slate-500 mt-2"><?= e($p['catatan_admin']) ?></p>
+            <?php endif; ?>
+        </article>
         <?php endforeach; ?>
 
         <?php if (!$rows): ?>
-            <p class="empty-state">Belum ada permintaan pencairan.</p>
+        <p class="empty-state">Belum ada permintaan pencairan.</p>
         <?php endif; ?>
     </section>
 </main>

@@ -59,10 +59,11 @@ require __DIR__ . '/../includes/header.php';
 <main class="dashboard-main manage-page">
     <p class="eyebrow">DASHBOARD PEKERJA</p>
     <h1 class="dashboard-title">Kelola jasa</h1>
-    <p class="market-lead">Tampilkan layanan yang kamu tawarkan. Harga yang dicantumkan adalah harga awal; rincian akhir bisa disepakati melalui penawaran.</p>
+    <p class="market-lead">Tampilkan layanan yang kamu tawarkan. Harga yang dicantumkan adalah harga awal; rincian akhir
+        bisa disepakati melalui penawaran.</p>
 
     <?php if ($err): ?>
-        <div class="alert alert-error mb-4"><?= e($err) ?></div>
+    <div class="alert alert-error mb-4"><?= e($err) ?></div>
     <?php endif; ?>
 
     <section class="dashboard-panel mb-6">
@@ -72,33 +73,38 @@ require __DIR__ . '/../includes/header.php';
             <input type="hidden" name="id" value="<?= (int)($edit['id'] ?? 0) ?>">
 
             <label>Nama layanan
-                <input class="form-control" name="nama_jasa" maxlength="150" required value="<?= e($edit['nama_jasa'] ?? '') ?>" placeholder="Contoh: Desain logo untuk UMKM">
+                <input class="form-control" name="nama_jasa" maxlength="150" required
+                    value="<?= e($edit['nama_jasa'] ?? '') ?>" placeholder="Contoh: Desain logo untuk UMKM">
             </label>
 
             <label>Kategori
                 <select class="form-control" name="kategori">
                     <?php foreach (['Desain', 'Konten', 'Teknologi', 'Administrasi', 'Lainnya'] as $c): ?>
-                        <option value="<?= e($c) ?>" <?= (($edit['kategori'] ?? '') === $c ? 'selected' : '') ?>><?= e($c) ?></option>
+                    <option value="<?= e($c) ?>" <?= (($edit['kategori'] ?? '') === $c ? 'selected' : '') ?>>
+                        <?= e($c) ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
 
             <label>Lokasi
-                <input class="form-control" name="lokasi" required value="<?= e($edit['lokasi'] ?? $u['lokasi'] ?? '') ?>">
+                <input class="form-control" name="lokasi" required
+                    value="<?= e($edit['lokasi'] ?? $u['lokasi'] ?? '') ?>">
             </label>
 
             <label>Harga mulai (Rp)
-                <input class="form-control" type="number" name="harga_mulai" min="1" step="1000" required value="<?= e((string)($edit['harga_mulai'] ?? '')) ?>">
+                <input class="form-control" type="number" name="harga_mulai" min="1" step="1000" required
+                    value="<?= e((string)($edit['harga_mulai'] ?? '')) ?>">
             </label>
 
             <label class="dashboard-span">Deskripsi layanan
-                <textarea class="form-control" name="deskripsi" rows="5" maxlength="5000" required><?= e($edit['deskripsi'] ?? '') ?></textarea>
+                <textarea class="form-control" name="deskripsi" rows="5" maxlength="5000"
+                    required><?= e($edit['deskripsi'] ?? '') ?></textarea>
             </label>
 
             <div class="dashboard-span flex flex-wrap gap-2">
                 <button class="btn-primary"><?= $edit ? 'Simpan perubahan' : 'Publikasikan jasa' ?></button>
                 <?php if ($edit): ?>
-                    <a class="btn-secondary" href="<?= BASE_URL ?>/pekerja/kelola-jasa.php">Batal</a>
+                <a class="btn-secondary" href="<?= BASE_URL ?>/pekerja/kelola-jasa.php">Batal</a>
                 <?php endif; ?>
             </div>
         </form>
@@ -108,17 +114,17 @@ require __DIR__ . '/../includes/header.php';
         <h2>Layanan yang kamu tampilkan</h2>
         <div class="service-manage-list mt-4">
             <?php foreach ($services as $s): ?>
-                <article>
-                    <div>
-                        <strong><?= e($s['nama_jasa']) ?></strong>
-                        <p><?= e($s['kategori']) ?> · <?= rupiah($s['harga_mulai']) ?> · <?= e($s['lokasi']) ?></p>
-                        <span class="status-chip"><?= e($s['status_publikasi'] ?? 'Aktif') ?></span>
-                    </div>
-                    <a class="btn-secondary" href="?edit=<?= (int)$s['id'] ?>">Edit</a>
-                </article>
+            <article>
+                <div>
+                    <strong><?= e($s['nama_jasa']) ?></strong>
+                    <p><?= e($s['kategori']) ?> · <?= rupiah($s['harga_mulai']) ?> · <?= e($s['lokasi']) ?></p>
+                    <span class="status-chip"><?= e($s['status_publikasi'] ?? 'Aktif') ?></span>
+                </div>
+                <a class="btn-secondary" href="?edit=<?= (int)$s['id'] ?>">Edit</a>
+            </article>
             <?php endforeach; ?>
             <?php if (!$services): ?>
-                <p class="empty-state">Kamu belum memasang layanan.</p>
+            <p class="empty-state">Kamu belum memasang layanan.</p>
             <?php endif; ?>
         </div>
     </section>

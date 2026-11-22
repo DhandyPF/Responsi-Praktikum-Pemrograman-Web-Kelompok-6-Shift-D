@@ -40,7 +40,7 @@ require __DIR__ . '/includes/header.php';
             <p class="text-slate-500">Pilih jasa, bandingkan paket, lalu pesan dengan alur transaksi yang jelas.</p>
         </div>
         <?php if (current_user() && current_user()['role'] === 'pekerja'): ?>
-            <a class="btn-primary" href="<?= BASE_URL ?>/pekerja/paket-jasa.php">Kelola jasa &amp; paket</a>
+        <a class="btn-primary" href="<?= BASE_URL ?>/pekerja/paket-jasa.php">Kelola jasa &amp; paket</a>
         <?php endif; ?>
     </div>
 
@@ -49,7 +49,7 @@ require __DIR__ . '/includes/header.php';
         <select class="form-control" name="kategori">
             <option value="">Semua kategori</option>
             <?php foreach (['Desain', 'Konten', 'Teknologi', 'Administrasi', 'Lainnya'] as $c): ?>
-                <option <?= ($cat === $c ? 'selected' : '') ?> value="<?= e($c) ?>"><?= e($c) ?></option>
+            <option <?= ($cat === $c ? 'selected' : '') ?> value="<?= e($c) ?>"><?= e($c) ?></option>
             <?php endforeach; ?>
         </select>
         <button class="btn-primary">Cari jasa</button>
@@ -57,27 +57,29 @@ require __DIR__ . '/includes/header.php';
 
     <div class="card-grid">
         <?php foreach ($items as $x): ?>
-            <article class="job-card">
-                <div class="flex justify-between gap-2">
-                    <span class="eyebrow"><?= e($x['kategori']) ?></span>
-                    <span class="text-xs text-amber-600">★ <?= $x['rating'] ? number_format((float)$x['rating'], 1) : 'Baru' ?> <span class="text-slate-400">(<?= (int)$x['total_ulasan'] ?>)</span></span>
+        <article class="job-card">
+            <div class="flex justify-between gap-2">
+                <span class="eyebrow"><?= e($x['kategori']) ?></span>
+                <span class="text-xs text-amber-600">★
+                    <?= $x['rating'] ? number_format((float)$x['rating'], 1) : 'Baru' ?> <span
+                        class="text-slate-400">(<?= (int)$x['total_ulasan'] ?>)</span></span>
+            </div>
+            <h2 class="font-bold text-ink text-lg mt-3"><?= e($x['nama_jasa']) ?></h2>
+            <p class="text-sm text-slate-500 mt-1">oleh <?= e($x['nama_pekerja']) ?> · <?= e($x['lokasi']) ?></p>
+            <p class="text-sm mt-3 line-clamp-3"><?= e(mb_strimwidth($x['deskripsi'], 0, 150, '…')) ?></p>
+            <div class="mt-5 flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-slate-500">Mulai dari</p>
+                    <strong class="text-ink"><?= rupiah($x['harga_paket'] ?? $x['harga_mulai']) ?></strong>
                 </div>
-                <h2 class="font-bold text-ink text-lg mt-3"><?= e($x['nama_jasa']) ?></h2>
-                <p class="text-sm text-slate-500 mt-1">oleh <?= e($x['nama_pekerja']) ?> · <?= e($x['lokasi']) ?></p>
-                <p class="text-sm mt-3 line-clamp-3"><?= e(mb_strimwidth($x['deskripsi'], 0, 150, '…')) ?></p>
-                <div class="mt-5 flex justify-between items-center">
-                    <div>
-                        <p class="text-xs text-slate-500">Mulai dari</p>
-                        <strong class="text-ink"><?= rupiah($x['harga_paket'] ?? $x['harga_mulai']) ?></strong>
-                    </div>
-                    <a class="btn-primary" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$x['id'] ?>">Lihat detail</a>
-                </div>
-            </article>
+                <a class="btn-primary" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$x['id'] ?>">Lihat detail</a>
+            </div>
+        </article>
         <?php endforeach; ?>
     </div>
 
     <?php if (!$items): ?>
-        <div class="empty-state">Belum ada jasa yang cocok. Coba kata kunci atau kategori lain.</div>
+    <div class="empty-state">Belum ada jasa yang cocok. Coba kata kunci atau kategori lain.</div>
     <?php endif; ?>
 </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>

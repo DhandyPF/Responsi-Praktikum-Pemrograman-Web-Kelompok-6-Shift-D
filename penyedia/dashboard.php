@@ -112,7 +112,8 @@ require __DIR__ . '/../includes/header.php';
                 <p class="text-xs text-slate-500 mt-2">Chat dengan pekerja.</p>
             </a>
             <a class="surface-card p-5" href="<?= BASE_URL ?>/notifikasi.php">
-                <b>Notifikasi<?php if ($unreadNotif): ?> <span class="nav-badge"><?= $unreadNotif ?></span><?php endif; ?></b>
+                <b>Notifikasi<?php if ($unreadNotif): ?> <span
+                        class="nav-badge"><?= $unreadNotif ?></span><?php endif; ?></b>
                 <p class="text-xs text-slate-500 mt-2">Status pesanan dan pesan terbaru.</p>
             </a>
             <a class="surface-card p-5" href="<?= BASE_URL ?>/penyedia/profil.php">
@@ -125,30 +126,31 @@ require __DIR__ . '/../includes/header.php';
     <section class="dashboard-panel mt-6">
         <h2>Lowongan terbaru</h2>
         <?php if ($jobs): ?>
-            <div class="table-wrapper mt-4">
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Posisi</th>
-                            <th>Status</th>
-                            <th>Pelamar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($jobs as $job): ?>
-                            <tr>
-                                <th>
-                                    <a class="text-link" href="<?= BASE_URL ?>/detail-lowongan.php?id=<?= (int)$job['id'] ?>"><?= e($job['judul']) ?></a>
-                                </th>
-                                <td><?= e($job['status']) ?></td>
-                                <td><?= (int)$job['jumlah_pelamar'] ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-wrapper mt-4">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Posisi</th>
+                        <th>Status</th>
+                        <th>Pelamar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($jobs as $job): ?>
+                    <tr>
+                        <th>
+                            <a class="text-link"
+                                href="<?= BASE_URL ?>/detail-lowongan.php?id=<?= (int)$job['id'] ?>"><?= e($job['judul']) ?></a>
+                        </th>
+                        <td><?= e($job['status']) ?></td>
+                        <td><?= (int)$job['jumlah_pelamar'] ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
         <?php else: ?>
-            <div class="empty-state mt-4">Belum ada lowongan. Buat lowongan pertamamu untuk mulai menjaring kandidat.</div>
+        <div class="empty-state mt-4">Belum ada lowongan. Buat lowongan pertamamu untuk mulai menjaring kandidat.</div>
         <?php endif; ?>
     </section>
 </main>

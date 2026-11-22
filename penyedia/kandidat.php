@@ -115,38 +115,77 @@ require __DIR__ . '/../includes/header.php';
 $success = flash('success');
 ?>
 <main class="dashboard-main">
- <p class="eyebrow">Penyedia usaha</p><h1 class="dashboard-title">Kelola kandidat</h1>
- <?php if ($success): ?><div class="alert alert-success"><?= e($success) ?></div><?php endif ?>
- <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif ?>
- <section class="dashboard-panel"><h2>Pelamar masuk</h2>
- <?php if ($items): ?><div class="space-y-5 mt-4">
- <?php foreach ($items as $x):
+    <p class="eyebrow">Penyedia usaha</p>
+    <h1 class="dashboard-title">Kelola kandidat</h1>
+    <?php if ($success): ?><div class="alert alert-success"><?= e($success) ?></div><?php endif ?>
+    <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif ?>
+    <section class="dashboard-panel">
+        <h2>Pelamar masuk</h2>
+        <?php if ($items): ?><div class="space-y-5 mt-4">
+            <?php foreach ($items as $x):
    $wa = nk_whatsapp_url($x['telepon'], 'Halo ' . $x['nama'] . ', saya menghubungi Anda terkait lamaran ' . $x['judul'] . ' di NusaKarya.');
    $statusClass = $x['status'] === 'Diterima' ? 'badge-green' : ($x['status'] === 'Ditolak' ? 'badge-amber' : 'badge-blue');
  ?>
- <article class="surface-card p-4">
-  <div class="flex flex-wrap justify-between gap-3"><div><b><?= e($x['nama']) ?></b><p class="text-xs text-slate-500 mt-1"><?= e($x['email']) ?> · <?= e($x['lokasi']) ?> · <?= e($x['telepon'] ?: 'Nomor WhatsApp belum tersedia') ?></p><p class="text-sm mt-2">Melamar: <b><?= e($x['judul']) ?></b> · <?= e(date('d M Y', strtotime($x['tanggal_lamar']))) ?></p></div><span class="<?= $statusClass ?>"><?= e($x['status']) ?></span></div>
-  <?php if ($x['status'] === 'Diterima' && $x['pesanan_id']): ?>
-   <div class="mt-4 rounded-xl bg-slate-50 p-3"><p class="font-semibold">Pekerjaan <?= e($x['kode_pesanan']) ?></p><p class="text-sm mt-1">Mode: <?= e(strtoupper((string)$x['jenis_pelaksanaan'])) ?> · Upah disepakati: <b><?= rupiah($x['harga_disepakati']) ?></b></p><p class="text-sm">Status pekerjaan: <b><?= e($x['status_pekerjaan']) ?></b> · Pembayaran: <?= e($x['status_pembayaran']) ?></p>
-    <?php if ($x['invoice_id']): ?><p class="text-sm mt-1">Invoice <?= e($x['invoice_code']) ?> · <?= e($x['invoice_status']) ?> · <?= rupiah($x['total_tagihan']) ?></p><a class="btn-secondary inline-flex mt-2" href="<?= BASE_URL ?>/penyedia/pembayaran.php?invoice=<?= (int)$x['invoice_id'] ?>">Buka invoice/pembayaran</a><?php endif ?>
-    <?php if ($wa): ?><a class="btn-secondary inline-flex mt-2" target="_blank" rel="noopener noreferrer" href="<?= e($wa) ?>">Hubungi pekerja via WhatsApp</a><?php endif ?>
-    <?php if ($x['status_pekerjaan'] === 'Menunggu Konfirmasi'): ?>
-     <p class="text-sm mt-3">Hubungi pekerja terlebih dahulu untuk menyepakati upah dan apakah pekerjaan dilakukan online atau offline. Setelah sepakat, catat detailnya di sini.</p>
-     <form method="post" class="grid md:grid-cols-3 gap-3 mt-3"><input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="agreement"><input type="hidden" name="id" value="<?= (int)$x['pesanan_id'] ?>"><label class="form-label">Jenis pelaksanaan<select class="form-control" name="jenis_pelaksanaan" required><option value="online">Freelance online</option><option value="offline">Freelance offline</option></select></label><label class="form-label">Upah disepakati (Rp)<input class="form-control" name="upah" type="number" min="1" step="1000" required></label><div class="flex items-end"><button class="btn-primary">Simpan kesepakatan</button></div></form>
-    <?php endif ?>
-    <?php if ($x['status_pekerjaan'] === 'Dikerjakan'): ?><form method="post" class="mt-3" data-confirm="Tandai pekerjaan ini selesai?"><?php endif ?>
-    <?php if ($x['status_pekerjaan'] === 'Dikerjakan'): ?><input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="complete"><input type="hidden" name="id" value="<?= (int)$x['pesanan_id'] ?>"><button class="btn-primary">Tandai pekerjaan selesai</button></form><?php endif ?>
-   </div>
-  <?php elseif ($x['status'] !== 'Diterima'): ?>
-   <form method="post" class="grid md:grid-cols-[1fr_2fr_auto] gap-3 mt-4 items-end">
-    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>"><input type="hidden" name="id" value="<?= (int)$x['id'] ?>">
-    <label class="form-label">Status<select class="form-control" name="status"><?php foreach (['Menunggu','Diproses','Diterima','Ditolak'] as $st): ?><option value="<?= e($st) ?>" <?= $x['status'] === $st ? 'selected' : '' ?>><?= e($st) ?></option><?php endforeach ?></select></label>
-    <label class="form-label">Catatan<input class="form-control" name="catatan" maxlength="2000" placeholder="Opsional"></label>
-    <button class="btn-primary" type="submit">Simpan</button>
-   </form>
-  <?php endif ?>
- </article>
- <?php endforeach ?></div><?php else: ?><div class="empty-state">Belum ada kandidat yang melamar lowongan Anda.</div><?php endif ?>
- </section>
+            <article class="surface-card p-4">
+                <div class="flex flex-wrap justify-between gap-3">
+                    <div><b><?= e($x['nama']) ?></b>
+                        <p class="text-xs text-slate-500 mt-1"><?= e($x['email']) ?> · <?= e($x['lokasi']) ?> ·
+                            <?= e($x['telepon'] ?: 'Nomor WhatsApp belum tersedia') ?></p>
+                        <p class="text-sm mt-2">Melamar: <b><?= e($x['judul']) ?></b> ·
+                            <?= e(date('d M Y', strtotime($x['tanggal_lamar']))) ?></p>
+                    </div><span class="<?= $statusClass ?>"><?= e($x['status']) ?></span>
+                </div>
+                <?php if ($x['status'] === 'Diterima' && $x['pesanan_id']): ?>
+                <div class="mt-4 rounded-xl bg-slate-50 p-3">
+                    <p class="font-semibold">Pekerjaan <?= e($x['kode_pesanan']) ?></p>
+                    <p class="text-sm mt-1">Mode: <?= e(strtoupper((string)$x['jenis_pelaksanaan'])) ?> · Upah
+                        disepakati: <b><?= rupiah($x['harga_disepakati']) ?></b></p>
+                    <p class="text-sm">Status pekerjaan: <b><?= e($x['status_pekerjaan']) ?></b> · Pembayaran:
+                        <?= e($x['status_pembayaran']) ?></p>
+                    <?php if ($x['invoice_id']): ?><p class="text-sm mt-1">Invoice <?= e($x['invoice_code']) ?> ·
+                        <?= e($x['invoice_status']) ?> · <?= rupiah($x['total_tagihan']) ?></p><a
+                        class="btn-secondary inline-flex mt-2"
+                        href="<?= BASE_URL ?>/penyedia/pembayaran.php?invoice=<?= (int)$x['invoice_id'] ?>">Buka
+                        invoice/pembayaran</a><?php endif ?>
+                    <?php if ($wa): ?><a class="btn-secondary inline-flex mt-2" target="_blank"
+                        rel="noopener noreferrer" href="<?= e($wa) ?>">Hubungi pekerja via WhatsApp</a><?php endif ?>
+                    <?php if ($x['status_pekerjaan'] === 'Menunggu Konfirmasi'): ?>
+                    <p class="text-sm mt-3">Hubungi pekerja terlebih dahulu untuk menyepakati upah dan apakah pekerjaan
+                        dilakukan online atau offline. Setelah sepakat, catat detailnya di sini.</p>
+                    <form method="post" class="grid md:grid-cols-3 gap-3 mt-3"><input type="hidden" name="_csrf"
+                            value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="agreement"><input
+                            type="hidden" name="id" value="<?= (int)$x['pesanan_id'] ?>"><label class="form-label">Jenis
+                            pelaksanaan<select class="form-control" name="jenis_pelaksanaan" required>
+                                <option value="online">Freelance online</option>
+                                <option value="offline">Freelance offline</option>
+                            </select></label><label class="form-label">Upah disepakati (Rp)<input class="form-control"
+                                name="upah" type="number" min="1" step="1000" required></label>
+                        <div class="flex items-end"><button class="btn-primary">Simpan kesepakatan</button></div>
+                    </form>
+                    <?php endif ?>
+                    <?php if ($x['status_pekerjaan'] === 'Dikerjakan'): ?><form method="post" class="mt-3"
+                        data-confirm="Tandai pekerjaan ini selesai?"><?php endif ?>
+                        <?php if ($x['status_pekerjaan'] === 'Dikerjakan'): ?><input type="hidden" name="_csrf"
+                            value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="complete"><input
+                            type="hidden" name="id" value="<?= (int)$x['pesanan_id'] ?>"><button
+                            class="btn-primary">Tandai pekerjaan selesai</button></form><?php endif ?>
+                </div>
+                <?php elseif ($x['status'] !== 'Diterima'): ?>
+                <form method="post" class="grid md:grid-cols-[1fr_2fr_auto] gap-3 mt-4 items-end">
+                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>"><input type="hidden" name="id"
+                        value="<?= (int)$x['id'] ?>">
+                    <label class="form-label">Status<select class="form-control"
+                            name="status"><?php foreach (['Menunggu','Diproses','Diterima','Ditolak'] as $st): ?><option
+                                value="<?= e($st) ?>" <?= $x['status'] === $st ? 'selected' : '' ?>><?= e($st) ?>
+                            </option><?php endforeach ?></select></label>
+                    <label class="form-label">Catatan<input class="form-control" name="catatan" maxlength="2000"
+                            placeholder="Opsional"></label>
+                    <button class="btn-primary" type="submit">Simpan</button>
+                </form>
+                <?php endif ?>
+            </article>
+            <?php endforeach ?>
+        </div><?php else: ?><div class="empty-state">Belum ada kandidat yang melamar lowongan Anda.</div><?php endif ?>
+    </section>
 </main>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

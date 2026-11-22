@@ -44,11 +44,11 @@ require __DIR__ . '/../includes/header.php';
     <h1 class="dashboard-title">Profil usaha</h1>
 
     <?php if ($success): ?>
-        <div class="alert alert-success"><?= e($success) ?></div>
+    <div class="alert alert-success"><?= e($success) ?></div>
     <?php endif; ?>
 
     <?php if ($error): ?>
-        <div class="alert alert-error"><?= e($error) ?></div>
+    <div class="alert alert-error"><?= e($error) ?></div>
     <?php endif; ?>
 
     <section class="dashboard-panel">

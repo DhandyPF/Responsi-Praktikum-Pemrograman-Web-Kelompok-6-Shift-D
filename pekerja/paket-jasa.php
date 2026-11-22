@@ -91,7 +91,7 @@ require __DIR__ . '/../includes/header.php';
     <h1 class="dashboard-title">Kelola jasa &amp; paket</h1>
 
     <?php if ($err): ?>
-        <div class="alert alert-error mb-4"><?= e($err) ?></div>
+    <div class="alert alert-error mb-4"><?= e($err) ?></div>
     <?php endif; ?>
 
     <section class="dashboard-panel mb-6">
@@ -107,7 +107,7 @@ require __DIR__ . '/../includes/header.php';
             <label>Kategori
                 <select class="form-control" name="kategori">
                     <?php foreach (['Desain', 'Konten', 'Teknologi', 'Administrasi', 'Lainnya'] as $c): ?>
-                        <option><?= e($c) ?></option>
+                    <option><?= e($c) ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
@@ -131,50 +131,50 @@ require __DIR__ . '/../includes/header.php';
     <section class="dashboard-panel mb-6">
         <h2 class="font-bold text-xl mb-4">Tambahkan paket layanan</h2>
         <?php if (!$services): ?>
-            <p class="text-slate-500">Buat jasa terlebih dahulu sebelum menambahkan paket.</p>
+        <p class="text-slate-500">Buat jasa terlebih dahulu sebelum menambahkan paket.</p>
         <?php else: ?>
-            <form method="post" class="dashboard-form">
-                <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                <input type="hidden" name="action" value="package">
+        <form method="post" class="dashboard-form">
+            <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="action" value="package">
 
-                <label>Pilih jasa
-                    <select class="form-control" name="jasa_id">
-                        <?php foreach ($services as $s): ?>
-                            <option value="<?= (int)$s['id'] ?>"><?= e($s['nama_jasa']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
+            <label>Pilih jasa
+                <select class="form-control" name="jasa_id">
+                    <?php foreach ($services as $s): ?>
+                    <option value="<?= (int)$s['id'] ?>"><?= e($s['nama_jasa']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
 
-                <label>Tipe paket
-                    <select class="form-control" name="nama_paket">
-                        <option>Basic</option>
-                        <option>Standard</option>
-                        <option>Premium</option>
-                    </select>
-                </label>
+            <label>Tipe paket
+                <select class="form-control" name="nama_paket">
+                    <option>Basic</option>
+                    <option>Standard</option>
+                    <option>Premium</option>
+                </select>
+            </label>
 
-                <label>Nama paket
-                    <input class="form-control" name="judul_paket" required placeholder="Contoh: Logo Starter">
-                </label>
+            <label>Nama paket
+                <input class="form-control" name="judul_paket" required placeholder="Contoh: Logo Starter">
+            </label>
 
-                <label>Harga (Rp)
-                    <input class="form-control" name="harga" type="number" min="1" step="1000" required>
-                </label>
+            <label>Harga (Rp)
+                <input class="form-control" name="harga" type="number" min="1" step="1000" required>
+            </label>
 
-                <label>Estimasi hari
-                    <input class="form-control" name="estimasi_hari" type="number" min="1" value="3" required>
-                </label>
+            <label>Estimasi hari
+                <input class="form-control" name="estimasi_hari" type="number" min="1" value="3" required>
+            </label>
 
-                <label>Jumlah revisi
-                    <input class="form-control" name="jumlah_revisi" type="number" min="0" value="1" required>
-                </label>
+            <label>Jumlah revisi
+                <input class="form-control" name="jumlah_revisi" type="number" min="0" value="1" required>
+            </label>
 
-                <label class="dashboard-span">Deskripsi / fitur
-                    <textarea class="form-control" name="deskripsi" rows="3" required></textarea>
-                </label>
+            <label class="dashboard-span">Deskripsi / fitur
+                <textarea class="form-control" name="deskripsi" rows="3" required></textarea>
+            </label>
 
-                <button class="btn-primary dashboard-span">Tambah paket</button>
-            </form>
+            <button class="btn-primary dashboard-span">Tambah paket</button>
+        </form>
         <?php endif; ?>
     </section>
 
@@ -182,22 +182,23 @@ require __DIR__ . '/../includes/header.php';
         <h2 class="font-bold text-xl mb-4">Paket aktif dan nonaktif</h2>
         <div class="space-y-3">
             <?php foreach ($packages as $p): ?>
-                <div class="border rounded-xl p-4 flex flex-wrap justify-between gap-3">
-                    <div>
-                        <strong><?= e($p['nama_jasa']) ?> — <?= e($p['judul_paket']) ?></strong>
-                        <p class="text-sm text-slate-500"><?= e($p['nama_paket']) ?> · <?= rupiah($p['harga']) ?> · <?= $p['estimasi_hari'] ?> hari · <?= $p['jumlah_revisi'] ?> revisi</p>
-                        <p class="text-sm mt-1"><?= e($p['deskripsi']) ?></p>
-                    </div>
-                    <form method="post">
-                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                        <input type="hidden" name="action" value="toggle">
-                        <input type="hidden" name="paket_id" value="<?= (int)$p['id'] ?>">
-                        <button class="btn-secondary"><?= $p['is_aktif'] ? 'Nonaktifkan' : 'Aktifkan' ?></button>
-                    </form>
+            <div class="border rounded-xl p-4 flex flex-wrap justify-between gap-3">
+                <div>
+                    <strong><?= e($p['nama_jasa']) ?> — <?= e($p['judul_paket']) ?></strong>
+                    <p class="text-sm text-slate-500"><?= e($p['nama_paket']) ?> · <?= rupiah($p['harga']) ?> ·
+                        <?= $p['estimasi_hari'] ?> hari · <?= $p['jumlah_revisi'] ?> revisi</p>
+                    <p class="text-sm mt-1"><?= e($p['deskripsi']) ?></p>
                 </div>
+                <form method="post">
+                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="action" value="toggle">
+                    <input type="hidden" name="paket_id" value="<?= (int)$p['id'] ?>">
+                    <button class="btn-secondary"><?= $p['is_aktif'] ? 'Nonaktifkan' : 'Aktifkan' ?></button>
+                </form>
+            </div>
             <?php endforeach; ?>
             <?php if (!$packages): ?>
-                <p class="text-slate-500">Belum ada paket yang dibuat.</p>
+            <p class="text-slate-500">Belum ada paket yang dibuat.</p>
             <?php endif; ?>
         </div>
     </section>

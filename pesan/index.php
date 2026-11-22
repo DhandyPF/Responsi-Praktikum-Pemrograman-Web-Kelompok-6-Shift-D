@@ -28,34 +28,39 @@ require __DIR__ . '/../includes/header.php';
 <main class="dashboard-main">
     <p class="eyebrow"><?= $user['role'] === 'pekerja' ? 'Pekerja / talenta' : 'Penyedia usaha / pembeli' ?></p>
     <h1 class="dashboard-title">Pesan</h1>
-    <p class="text-sm text-slate-500 mt-2">Percakapan dengan <?= $user['role'] === 'pekerja' ? 'pembeli jasa' : 'pekerja' ?>.</p>
+    <p class="text-sm text-slate-500 mt-2">Percakapan dengan
+        <?= $user['role'] === 'pekerja' ? 'pembeli jasa' : 'pekerja' ?>.</p>
 
     <section class="dashboard-panel">
         <h2>Daftar percakapan</h2>
         <?php if ($items): ?>
-            <ul class="conv-list mt-4">
-                <?php foreach ($items as $c): ?>
-                    <li>
-                        <a class="conv-item <?= (int) $c['belum_dibaca'] > 0 ? 'unread' : '' ?>" href="<?= BASE_URL ?>/pesan/chat.php?id=<?= (int) $c['id'] ?>">
-                            <span class="avatar"><?= e(strtoupper(mb_substr($c['lawan'], 0, 1))) ?></span>
-                            <span class="conv-body">
-                                <b class="text-ink"><?= e($c['lawan']) ?></b>
-                                <span class="conv-snippet"><?= $c['terakhir'] !== null ? ((int) $c['pengirim_terakhir'] === $uid ? 'Anda: ' : '') . e(mb_substr($c['terakhir'], 0, 90)) : 'Belum ada pesan. Mulai percakapan.' ?></span>
-                            </span>
-                            <span class="conv-meta">
-                                <span class="text-xs text-slate-500"><?= $c['last_message_at'] ? e(date('d M H:i', strtotime($c['last_message_at']))) : '' ?></span>
-                                <?php if ((int) $c['belum_dibaca'] > 0): ?>
-                                    <span class="nav-badge" aria-label="<?= (int) $c['belum_dibaca'] ?> pesan belum dibaca"><?= (int) $c['belum_dibaca'] ?></span>
-                                <?php endif; ?>
-                            </span>
-                        </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+        <ul class="conv-list mt-4">
+            <?php foreach ($items as $c): ?>
+            <li>
+                <a class="conv-item <?= (int) $c['belum_dibaca'] > 0 ? 'unread' : '' ?>"
+                    href="<?= BASE_URL ?>/pesan/chat.php?id=<?= (int) $c['id'] ?>">
+                    <span class="avatar"><?= e(strtoupper(mb_substr($c['lawan'], 0, 1))) ?></span>
+                    <span class="conv-body">
+                        <b class="text-ink"><?= e($c['lawan']) ?></b>
+                        <span
+                            class="conv-snippet"><?= $c['terakhir'] !== null ? ((int) $c['pengirim_terakhir'] === $uid ? 'Anda: ' : '') . e(mb_substr($c['terakhir'], 0, 90)) : 'Belum ada pesan. Mulai percakapan.' ?></span>
+                    </span>
+                    <span class="conv-meta">
+                        <span
+                            class="text-xs text-slate-500"><?= $c['last_message_at'] ? e(date('d M H:i', strtotime($c['last_message_at']))) : '' ?></span>
+                        <?php if ((int) $c['belum_dibaca'] > 0): ?>
+                        <span class="nav-badge"
+                            aria-label="<?= (int) $c['belum_dibaca'] ?> pesan belum dibaca"><?= (int) $c['belum_dibaca'] ?></span>
+                        <?php endif; ?>
+                    </span>
+                </a>
+            </li>
+            <?php endforeach; ?>
+        </ul>
         <?php else: ?>
-            <div class="empty-state mt-4">
-                <?= $user['role'] === 'penyedia' ? 'Belum ada percakapan. Buka detail sebuah jasa lalu pilih "Kirim pesan" untuk mulai berdiskusi.' : 'Belum ada percakapan. Pembeli yang tertarik pada jasamu akan menghubungimu di sini.' ?>
-            </div>
+        <div class="empty-state mt-4">
+            <?= $user['role'] === 'penyedia' ? 'Belum ada percakapan. Buka detail sebuah jasa lalu pilih "Kirim pesan" untuk mulai berdiskusi.' : 'Belum ada percakapan. Pembeli yang tertarik pada jasamu akan menghubungimu di sini.' ?>
+        </div>
         <?php endif; ?>
     </section>
 </main>

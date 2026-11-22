@@ -128,11 +128,11 @@ require __DIR__ . '/../includes/header.php';
     <h1 class="dashboard-title">Pembayaran pesanan</h1>
 
     <?php if ($success): ?>
-        <div class="alert alert-success mb-4"><?= e($success) ?></div>
+    <div class="alert alert-success mb-4"><?= e($success) ?></div>
     <?php endif; ?>
 
     <?php if ($err): ?>
-        <div class="alert alert-error mb-4"><?= e($err) ?></div>
+    <div class="alert alert-error mb-4"><?= e($err) ?></div>
     <?php endif; ?>
 
     <div class="grid lg:grid-cols-[1.2fr_.8fr] gap-6">
@@ -167,78 +167,86 @@ require __DIR__ . '/../includes/header.php';
             <p class="text-sm">Status invoice: <b><?= e($iv['status']) ?></b></p>
 
             <?php if (!in_array($iv['status'], ['Lunas', 'Refund Penuh', 'Dibatalkan', 'Menunggu Verifikasi'], true)): ?>
-                <div class="border rounded-xl p-4 mt-5">
-                    <div class="flex items-center justify-between gap-3">
-                        <h3 class="font-bold">Bayar online dengan Midtrans</h3>
-                        <span class="text-xs rounded-full bg-emerald-50 text-emerald-700 px-2 py-1">Direkomendasikan</span>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-2">Pilih QRIS, Virtual Account, e-wallet, atau kartu debit/kredit pada halaman checkout Midtrans.</p>
-                    <form method="post" class="mt-4">
-                        <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                        <input type="hidden" name="action" value="midtrans">
-                        <button class="btn-primary" <?= !$cfg['server_key'] ? 'disabled title="Midtrans belum dikonfigurasi"' : '' ?>>Lanjutkan ke pembayaran Midtrans</button>
-                    </form>
-                    <?php if (!$cfg['server_key']): ?>
-                        <p class="text-xs text-amber-700 mt-2">Admin perlu mengisi kredensial Midtrans terlebih dahulu. Pembayaran manual tetap tersedia.</p>
-                    <?php endif; ?>
+            <div class="border rounded-xl p-4 mt-5">
+                <div class="flex items-center justify-between gap-3">
+                    <h3 class="font-bold">Bayar online dengan Midtrans</h3>
+                    <span class="text-xs rounded-full bg-emerald-50 text-emerald-700 px-2 py-1">Direkomendasikan</span>
                 </div>
+                <p class="text-sm text-slate-500 mt-2">Pilih QRIS, Virtual Account, e-wallet, atau kartu debit/kredit
+                    pada halaman checkout Midtrans.</p>
+                <form method="post" class="mt-4">
+                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="action" value="midtrans">
+                    <button class="btn-primary"
+                        <?= !$cfg['server_key'] ? 'disabled title="Midtrans belum dikonfigurasi"' : '' ?>>Lanjutkan ke
+                        pembayaran Midtrans</button>
+                </form>
+                <?php if (!$cfg['server_key']): ?>
+                <p class="text-xs text-amber-700 mt-2">Admin perlu mengisi kredensial Midtrans terlebih dahulu.
+                    Pembayaran manual tetap tersedia.</p>
+                <?php endif; ?>
+            </div>
 
-                <div class="border rounded-xl p-4 mt-4">
-                    <h3 class="font-bold">Transfer bank manual</h3>
-                    <p class="text-sm text-slate-500 mt-1">Transfer hanya ke rekening resmi NusaKarya. Pembayaran diverifikasi secara manual.</p>
+            <div class="border rounded-xl p-4 mt-4">
+                <h3 class="font-bold">Transfer bank manual</h3>
+                <p class="text-sm text-slate-500 mt-1">Transfer hanya ke rekening resmi NusaKarya. Pembayaran
+                    diverifikasi secara manual.</p>
 
-                    <?php if ($manualAccounts): ?>
-                        <div class="rounded-lg bg-slate-50 p-3 mt-3 space-y-2">
-                            <?php foreach ($manualAccounts as $account): ?>
-                                <p class="text-sm">
-                                    <b><?= e($account['bank'] ?? 'Bank') ?></b><br>
-                                    <?= e($account['account'] ?? '') ?> · <?= e($account['holder'] ?? '') ?>
-                                </p>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-sm text-amber-700 mt-2">Rekening resmi belum diatur. Hubungi admin NusaKarya sebelum melakukan transfer.</p>
-                    <?php endif; ?>
-
-                    <?php if ($manualPay): ?>
-                        <form method="post" enctype="multipart/form-data" class="mt-4 space-y-3">
-                            <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                            <input type="hidden" name="action" value="manual_proof">
-                            <input type="hidden" name="payment_id" value="<?= (int)$manualPay['id'] ?>">
-
-                            <label class="block text-sm">Unggah bukti transfer (JPG/PNG/PDF, maks. 4 MB)
-                                <input class="form-control mt-2" type="file" name="bukti" accept="image/jpeg,image/png,application/pdf" required>
-                            </label>
-
-                            <button class="btn-secondary">Kirim bukti untuk diverifikasi</button>
-                        </form>
-                    <?php else: ?>
-                        <form method="post" class="mt-3">
-                            <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
-                            <input type="hidden" name="action" value="manual_new">
-                            <button class="btn-secondary">Gunakan transfer manual</button>
-                        </form>
-                    <?php endif; ?>
+                <?php if ($manualAccounts): ?>
+                <div class="rounded-lg bg-slate-50 p-3 mt-3 space-y-2">
+                    <?php foreach ($manualAccounts as $account): ?>
+                    <p class="text-sm">
+                        <b><?= e($account['bank'] ?? 'Bank') ?></b><br>
+                        <?= e($account['account'] ?? '') ?> · <?= e($account['holder'] ?? '') ?>
+                    </p>
+                    <?php endforeach; ?>
                 </div>
+                <?php else: ?>
+                <p class="text-sm text-amber-700 mt-2">Rekening resmi belum diatur. Hubungi admin NusaKarya sebelum
+                    melakukan transfer.</p>
+                <?php endif; ?>
+
+                <?php if ($manualPay): ?>
+                <form method="post" enctype="multipart/form-data" class="mt-4 space-y-3">
+                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="action" value="manual_proof">
+                    <input type="hidden" name="payment_id" value="<?= (int)$manualPay['id'] ?>">
+
+                    <label class="block text-sm">Unggah bukti transfer (JPG/PNG/PDF, maks. 4 MB)
+                        <input class="form-control mt-2" type="file" name="bukti"
+                            accept="image/jpeg,image/png,application/pdf" required>
+                    </label>
+
+                    <button class="btn-secondary">Kirim bukti untuk diverifikasi</button>
+                </form>
+                <?php else: ?>
+                <form method="post" class="mt-3">
+                    <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="action" value="manual_new">
+                    <button class="btn-secondary">Gunakan transfer manual</button>
+                </form>
+                <?php endif; ?>
+            </div>
             <?php endif; ?>
         </section>
 
         <aside class="dashboard-panel">
             <h3 class="font-bold text-lg mb-3">Riwayat pembayaran</h3>
             <?php foreach ($payments as $p): ?>
-                <article class="border-b py-3 last:border-0">
-                    <div class="flex justify-between gap-2">
-                        <b class="text-sm"><?= e(strtoupper($p['provider'] ?: $p['metode'])) ?></b>
-                        <span class="text-xs"><?= e($p['status']) ?></span>
-                    </div>
-                    <p class="text-sm mt-1"><?= rupiah($p['jumlah']) ?> · <?= e($p['kode_pembayaran']) ?></p>
-                    <?php if ($p['snap_redirect_url'] && $p['status'] === 'Menunggu'): ?>
-                        <a class="text-sm text-teal-700 underline" href="<?= e($p['snap_redirect_url']) ?>">Lanjutkan pembayaran</a>
-                    <?php endif; ?>
-                    <?php if ($p['catatan_verifikasi']): ?>
-                        <p class="text-xs text-slate-500 mt-1"><?= e($p['catatan_verifikasi']) ?></p>
-                    <?php endif; ?>
-                </article>
+            <article class="border-b py-3 last:border-0">
+                <div class="flex justify-between gap-2">
+                    <b class="text-sm"><?= e(strtoupper($p['provider'] ?: $p['metode'])) ?></b>
+                    <span class="text-xs"><?= e($p['status']) ?></span>
+                </div>
+                <p class="text-sm mt-1"><?= rupiah($p['jumlah']) ?> · <?= e($p['kode_pembayaran']) ?></p>
+                <?php if ($p['snap_redirect_url'] && $p['status'] === 'Menunggu'): ?>
+                <a class="text-sm text-teal-700 underline" href="<?= e($p['snap_redirect_url']) ?>">Lanjutkan
+                    pembayaran</a>
+                <?php endif; ?>
+                <?php if ($p['catatan_verifikasi']): ?>
+                <p class="text-xs text-slate-500 mt-1"><?= e($p['catatan_verifikasi']) ?></p>
+                <?php endif; ?>
+            </article>
             <?php endforeach; ?>
         </aside>
     </div>

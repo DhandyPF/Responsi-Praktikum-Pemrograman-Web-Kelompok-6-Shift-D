@@ -37,22 +37,25 @@ require __DIR__ . '/../includes/header.php';
         <p class="text-xs text-slate-500 mt-2">Akses profil, lamaran, pelatihan, dan peluangmu.</p>
 
         <?php if ($error): ?>
-            <div class="alert alert-error" role="alert"><?= e($error) ?></div>
+        <div class="alert alert-error" role="alert"><?= e($error) ?></div>
         <?php endif; ?>
 
         <form method="post" novalidate>
             <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
 
             <label class="form-label" for="email">Email</label>
-            <input class="form-control" id="email" name="email" type="email" autocomplete="email" required value="<?= e($_POST['email'] ?? '') ?>">
+            <input class="form-control" id="email" name="email" type="email" autocomplete="email" required
+                value="<?= e($_POST['email'] ?? '') ?>">
 
             <label class="form-label" for="password">Kata sandi</label>
-            <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
+            <input class="form-control" id="password" name="password" type="password" autocomplete="current-password"
+                required>
 
             <button class="btn-primary w-full mt-6" type="submit">Masuk</button>
         </form>
 
-        <p class="text-center text-xs text-slate-500 mt-5">Belum punya akun? <a class="font-bold text-teal" href="<?= BASE_URL ?>/auth/register.php">Daftar gratis</a></p>
+        <p class="text-center text-xs text-slate-500 mt-5">Belum punya akun? <a class="font-bold text-teal"
+                href="<?= BASE_URL ?>/auth/register.php">Daftar gratis</a></p>
 
         <div class="mt-6 border-t pt-4 text-[11px] text-slate-500 leading-6">
             <b>Akun demo (kata sandi: password)</b><br>
