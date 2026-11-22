@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/functions.php';
+require_once __DIR__ . '/../config/stage3.php';
 require_login('pekerja');
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') redirect('/lowongan.php');
 
@@ -8,7 +9,7 @@ verify_csrf();
 $user = current_user();
 $lowonganId = (int)($_POST['lowongan_id'] ?? 0);
 
-$stmt = $pdo->prepare("SELECT id FROM lowongan WHERE id=:id AND status='Aktif' LIMIT 1");
+$stmt = $pdo->prepare("SELECT id,penyedia_id,judul FROM lowongan WHERE id=:id AND status='Aktif' LIMIT 1");
 $stmt->execute(['id' => $lowonganId]);
 $lowongan = $stmt->fetch();
 
@@ -28,6 +29,7 @@ $insert = $pdo->prepare('INSERT INTO lamaran (lowongan_id,pekerja_id,pesan_singk
 $insert->execute(['lowongan' => $lowonganId, 'pekerja' => (int)$user['id']]);
 $applicationId = (int)$pdo->lastInsertId();
 $history = $pdo->prepare('INSERT INTO riwayat_lamaran (lamaran_id,status_sebelumnya,status_terbaru,catatan,diubah_oleh) VALUES (?,?,?,?,NULL)');
-$history->execute([$applicationId, 'Menunggu', 'Menunggu', 'Lamaran dikirim',]);
+$history->execute([$applicationId, 'Menunggu', 'Menunggu', 'Lamaran dikirim']);
+notify($pdo, (int)$lowongan['penyedia_id'], 'lamaran', 'Lamaran baru diterima', $user['nama'] . ' mengirim lamaran untuk ' . $lowongan['judul'] . '.', '/penyedia/kandidat.php');
 flash('success', 'Lamaran berhasil dikirim.');
 redirect('/pekerja/lamaran.php');

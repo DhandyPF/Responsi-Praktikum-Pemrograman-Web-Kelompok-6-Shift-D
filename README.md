@@ -79,9 +79,16 @@ Fitur pendukung yang terintegrasi meliputi notifikasi, rating/ulasan, pengiriman
 - Jangan commit file konfigurasi lokal yang berisi kredensial atau informasi rekening.
 - Webhook Midtrans memerlukan URL HTTPS publik yang diatur pada dashboard Midtrans. Pengujian di localhost saja tidak dapat menerima notifikasi langsung dari Midtrans.
 
-### Penting untuk database yang sudah berisi data
+### Upgrade database proyek lama (jangan import ulang database.sql)
 
-`database.sql` digunakan untuk **instalasi baru pada database kosong**. Jangan import ulang ke database proyek lama karena file ini membuat tabel dan menjalankan perubahan skema. Backup database sebelum melakukan upgrade; gunakan prosedur migrasi yang sesuai dengan versi database yang sudah berjalan.
+`database.sql` hanya untuk **instalasi baru pada database kosong**. Untuk database proyek lama yang sudah berisi data, lakukan backup terlebih dahulu, lalu jalankan urutan berikut melalui phpMyAdmin pada database `db_nusakarya`:
+
+1. `database/migrations/004_tahap4_perbaikan.sql` — menambahkan kolom kompatibilitas dan membuat tabel marketplace/transaksi Tahap 4 yang belum ada. Tabel/data yang sudah ada tidak ditimpa.
+2. `database/migrasi_lamaran_pekerjaan.sql` — menambahkan relasi pesanan dengan lamaran serta metode pelaksanaan online/offline. Jalankan satu kali.
+
+File `database/migrasi_wallet.sql` disediakan untuk instalasi lama yang hanya membutuhkan tabel mutasi/pencairan; bila sudah menjalankan migrasi 004 di atas, tabel wallet terkait sudah dibuat sehingga file ini tidak perlu dijalankan lagi. Jangan jalankan `database.sql` pada database lama.
+
+Jika phpMyAdmin melaporkan error saat migrasi, hentikan proses dan simpan pesan error lengkap; jangan mengulang skrip ALTER yang sudah sebagian berhasil tanpa memeriksa struktur tabel.
 
 ## Akun Demo
 
@@ -114,3 +121,31 @@ Gunakan akun demo untuk memeriksa alur utama:
 - File unggahan dibatasi berdasarkan tipe dan ukuran serta disimpan pada folder upload yang dilindungi.
 - Chat menggunakan polling berkala, bukan WebSocket.
 - Pencairan saldo pekerja dilakukan secara manual oleh admin; bukan fitur payout otomatis Midtrans.
+
+
+## Pengembangan alur lamaran dan pembayaran pekerjaan (2026)
+
+Setelah database proyek yang sudah ada di-import/diperbarui, jalankan migrasi Tahap 4 dan lamaran sesuai urutan pada bagian **Upgrade database proyek lama** di atas. Backup database sebelum menjalankan migrasi. Migrasi lamaran menambahkan relasi unik `pesanan.lamaran_id` dan `pesanan.jenis_pelaksanaan` tanpa menghapus data pesanan lama.
+
+Alur lamaran:
+1. Penyedia mengubah status kandidat menjadi Diproses, Diterima, atau Ditolak.
+2. Saat Diterima, sistem membuat satu pesanan yang terhubung ke lamaran. Pekerja dan
+   penyedia memperoleh notifikasi; tautan WhatsApp memakai nomor `users.telepon` yang ada.
+3. Penyedia dan pekerja menyepakati upah serta metode melalui WhatsApp. Penyedia mencatat
+   kesepakatan di halaman Kelola Kandidat untuk mengubah status menjadi Dikerjakan.
+4. Penyedia menandai pekerjaan selesai.
+   - `online`: sistem membuat invoice dari harga kesepakatan menggunakan helper invoice
+     dan komisi yang sudah ada. Saldo pekerja baru dikredit setelah Midtrans mengirim
+     notifikasi settlement/capture valid atau admin memverifikasi pembayaran manual.
+   - `offline`: pekerjaan menjadi Selesai tanpa invoice, pembayaran, atau mutasi dompet.
+5. Kredit dompet menggunakan ledger `mutasi_dompet` dengan referensi pesanan dan
+   perlindungan idempotensi agar saldo tidak dikredit dua kali.
+
+Konfigurasi Midtrans tetap berada di `config/midtrans.local.php` (salin dari file
+`.example`) atau environment variables yang sudah didukung proyek. Jangan menandai
+pembayaran berhasil secara manual kecuali bukti/settlement telah diverifikasi.
+
+Pedoman implementasi mengikuti modul praktikum: HTML semantik untuk struktur halaman,
+CSS yang sudah tersedia untuk tampilan responsif, JavaScript Vanilla hanya untuk
+interaksi browser, serta PHP server-side dan CRUD MySQLi prepared statements sesuai
+pola `Database` wrapper proyek.

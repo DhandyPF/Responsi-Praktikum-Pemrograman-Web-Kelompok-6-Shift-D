@@ -1,9 +1,10 @@
 <?php
-// Salin file ini menjadi midtrans.local.php dan isi kredensial dari Midtrans MAP.
+// Salin file ini menjadi midtrans.local.php, lalu isi kredensial Sandbox dari dashboard Midtrans.
+// Kredensial kosong sengaja digunakan agar tombol pembayaran tidak aktif sebelum dikonfigurasi.
 // JANGAN commit atau bagikan file midtrans.local.php.
 return [
-  'server_key' => 'SB-Mid-server-ISI_SERVER_KEY_SANDBOX',
-  'signature_secret' => 'ISI_SIGNATURE_SECRET_KEY',
-  'client_key' => 'SB-Mid-client-ISI_CLIENT_KEY',
-  'production' => false, // ubah true hanya setelah lulus uji Sandbox dan siap live
+  'server_key' => '',
+  'signature_secret' => '',
+  'client_key' => '',
+  'production' => false, // ubah true hanya setelah uji Sandbox berhasil dan siap live
 ];

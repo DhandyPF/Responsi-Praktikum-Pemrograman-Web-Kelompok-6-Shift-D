@@ -32,7 +32,7 @@ $q->execute([$uid]);
 $items = $q->fetchAll();
 $unread = unread_notification_count($pdo, $uid);
 $success = flash('success');
-$icons = ['pesan' => '💬', 'pesanan' => '🧾', 'status_pesanan' => '🔄', 'ulasan' => '⭐'];
+$icons = ['lamaran' => '📄', 'pesan' => '💬', 'pesanan' => '🧾', 'status_pesanan' => '🔄', 'ulasan' => '⭐'];
 $pageTitle = 'Notifikasi';
 require __DIR__ . '/includes/header.php';
 ?>
