@@ -1565,3 +1565,30 @@ body[data-theme="dark"] .deal-confirmed {
     justify-content: center;
   }
 }
+
+
+/* Header final: tautan inti ringkas, fitur role-specific berada di Aktivitas. */
+@media (min-width: 761px) {
+  .nav-shell { width: min(1440px, calc(100% - 48px)); gap: clamp(12px, 1.5vw, 22px); }
+  .brand { flex: 0 0 auto; margin-right: 0; }
+  .nav-links { flex: 1 1 auto; min-width: 0; max-width: none; flex-wrap: nowrap; gap: clamp(10px, 1.1vw, 17px); }
+  .nav-links > a:not(.btn-primary) { white-space: nowrap; }
+  .nav-more { flex: 0 0 auto; }
+  .nav-more-menu { min-width: 230px; max-height: min(72vh, 560px); overflow-y: auto; }
+  .nav-menu-label { display: block; padding: 9px 11px 4px; color: #8b83a4; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .nav-menu-label:not(:first-child) { margin-top: 5px; border-top: 1px solid #eeeaf6; padding-top: 12px; }
+  body[data-theme="dark"] .nav-menu-label { color: #b9add8; }
+  body[data-theme="dark"] .nav-menu-label:not(:first-child) { border-color: var(--color-dark-neutral-2); }
+}
+@media (min-width: 761px) and (max-width: 1120px) {
+  .nav-shell { width: calc(100% - 28px); padding-inline: 14px; gap: 10px; }
+  .brand { font-size: 17px; gap: 7px; }
+  .nav-links { gap: 9px; font-size: 11px; }
+  .nav-links .theme-toggle { padding: 8px 9px; }
+  .nav-links .nav-cta { padding: 9px 11px; }
+}
+@media (max-width: 760px) {
+  .nav-menu-label { display: block; padding: 9px 11px 4px; color: #8b83a4; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .nav-menu-label:not(:first-child) { margin-top: 5px; border-top: 1px solid #eeeaf6; padding-top: 12px; }
+  .nav-more-menu { max-height: 55vh; overflow-y: auto; }
+}

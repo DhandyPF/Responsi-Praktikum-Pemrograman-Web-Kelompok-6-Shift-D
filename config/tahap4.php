@@ -52,7 +52,7 @@ function t4_midtrans_create_snap(Database $pdo,int $invoiceId,int $buyerId): arr
     $pdo->prepare('UPDATE pembayaran SET snap_token=?,snap_redirect_url=?,provider_reference=? WHERE id=?')->execute([$data['token'],$data['redirect_url'],$payCode,$paymentId]);$pdo->prepare("UPDATE pembayaran SET status='Dibatalkan',raw_status='replaced_by_midtrans' WHERE invoice_id=? AND metode='manual' AND status='Menunggu'")->execute([$invoiceId]);return ['payment_id'=>$paymentId,'redirect_url'=>$data['redirect_url'],'token'=>$data['token']];
 }
 
-function t4_credit_worker_after_completion(Database $pdo,int $orderId,int $actorId): void {
+function t4_credit_worker_after_completion(Database $pdo,int $orderId,?int $actorId): void {
     $q=$pdo->prepare('SELECT o.pekerja_id,o.kode_pesanan,i.id invoice_id,i.subtotal_jasa,i.komisi_pekerja_nominal,i.status invoice_status FROM pesanan o JOIN invoice i ON i.pesanan_id=o.id WHERE o.id=? ORDER BY i.versi DESC LIMIT 1 FOR UPDATE');$q->execute([$orderId]);$r=$q->fetch();if(!$r||$r['invoice_status']!=='Lunas')throw new RuntimeException('Pesanan hanya dapat menghasilkan saldo setelah invoice lunas.');
     $pdo->prepare('INSERT IGNORE INTO dompet_pekerja (pekerja_id) VALUES (?)')->execute([$r['pekerja_id']]);$q=$pdo->prepare('SELECT * FROM dompet_pekerja WHERE pekerja_id=? FOR UPDATE');$q->execute([$r['pekerja_id']]);$w=$q->fetch();$net=max(0,round((float)$r['subtotal_jasa']-(float)$r['komisi_pekerja_nominal'],2));
     $check=$pdo->prepare("SELECT id FROM mutasi_dompet WHERE jenis='Pendapatan Pesanan' AND referensi_tipe='pesanan' AND referensi_id=?");$check->execute([$orderId]);if($check->fetchColumn())return;

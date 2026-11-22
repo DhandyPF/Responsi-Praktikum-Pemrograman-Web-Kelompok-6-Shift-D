@@ -55,15 +55,34 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
         <details class="nav-more">
           <summary>Aktivitas <span aria-hidden="true">⌄</span></summary>
           <div class="nav-more-menu">
-            <?php if (($user['role'] ?? '') === 'admin'): ?>
+            <?php if (($user['role'] ?? '') === 'pekerja'): ?>
+              <span class="nav-menu-label">Aktivitas pekerjaan</span>
+              <a href="<?= BASE_URL ?>/pekerja/lamaran.php">Lamaran</a>
+              <a href="<?= BASE_URL ?>/pekerja/tahap4-pesanan.php">Pesanan</a>
+              <a href="<?= BASE_URL ?>/pekerja/kelola-jasa.php">Kelola Jasa</a>
+              <a href="<?= BASE_URL ?>/pekerja/dompet.php">Dompet</a>
+              <span class="nav-menu-label">Komunikasi & profil</span>
+              <a href="<?= BASE_URL ?>/pesan/index.php">Pesan<?php if ($navPesan > 0): ?> <span class="nav-badge"><?= $navPesan > 99 ? '99+' : (int)$navPesan ?></span><?php endif ?></a>
+              <a href="<?= BASE_URL ?>/notifikasi.php">Notifikasi<?php if ($navNotif > 0): ?> <span class="nav-badge"><?= $navNotif > 99 ? '99+' : (int)$navNotif ?></span><?php endif ?></a>
+              <a href="<?= BASE_URL ?>/pekerja/profil.php">Profil & Portofolio</a>
+              <a href="<?= BASE_URL ?>/pekerja/rekomendasi.php">Rekomendasi Lowongan</a>
+            <?php elseif (($user['role'] ?? '') === 'penyedia'): ?>
+              <span class="nav-menu-label">Kelola usaha & pekerjaan</span>
+              <a href="<?= BASE_URL ?>/penyedia/lowongan.php">Lowongan Saya</a>
+              <a href="<?= BASE_URL ?>/penyedia/kandidat.php">Kandidat</a>
+              <a href="<?= BASE_URL ?>/penyedia/tahap4-pesanan.php">Transaksi & Pesanan</a>
+              <span class="nav-menu-label">Komunikasi & profil</span>
+              <a href="<?= BASE_URL ?>/pesan/index.php">Pesan<?php if ($navPesan > 0): ?> <span class="nav-badge"><?= $navPesan > 99 ? '99+' : (int)$navPesan ?></span><?php endif ?></a>
+              <a href="<?= BASE_URL ?>/notifikasi.php">Notifikasi<?php if ($navNotif > 0): ?> <span class="nav-badge"><?= $navNotif > 99 ? '99+' : (int)$navNotif ?></span><?php endif ?></a>
+              <a href="<?= BASE_URL ?>/penyedia/profil.php">Profil Usaha</a>
+            <?php elseif (($user['role'] ?? '') === 'admin'): ?>
+              <span class="nav-menu-label">Administrasi</span>
               <a href="<?= BASE_URL ?>/admin/tahap4-transaksi.php">Transaksi</a>
               <a href="<?= BASE_URL ?>/admin/pencairan.php">Pencairan</a>
               <a href="<?= BASE_URL ?>/admin/pengguna.php">Pengguna</a>
-            <?php elseif ($navPesananUrl): ?>
-              <a href="<?= e($navPesananUrl) ?>"><?= $user['role'] === 'pekerja' ? 'Pesanan Masuk' : 'Pesanan Saya' ?></a>
-              <?php if (($user['role'] ?? '') === 'pekerja'): ?><a href="<?= BASE_URL ?>/pekerja/dompet.php">Keuangan</a><?php endif ?>
-              <a href="<?= BASE_URL ?>/pesan/index.php">Pesan<?php if ($navPesan > 0): ?> <span class="nav-badge"><?= $navPesan > 99 ? '99+' : (int)$navPesan ?></span><?php endif ?></a>
-              <a href="<?= BASE_URL ?>/notifikasi.php">Notifikasi<?php if ($navNotif > 0): ?> <span class="nav-badge"><?= $navNotif > 99 ? '99+' : (int)$navNotif ?></span><?php endif ?></a>
+              <span class="nav-menu-label">Monitoring</span>
+              <a href="<?= BASE_URL ?>/admin/statistik.php">Statistik</a>
+              <a href="<?= BASE_URL ?>/admin/bukti-pembayaran.php">Bukti Pembayaran</a>
             <?php endif ?>
           </div>
         </details>
