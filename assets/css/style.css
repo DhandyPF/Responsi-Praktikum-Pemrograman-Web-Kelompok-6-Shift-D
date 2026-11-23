@@ -82,6 +82,11 @@ body {
   max-width: 1280px !important;
   margin-inline: auto;
 }
+
+.footer > .max-w-6xl {
+  width: 100%;
+  max-width: none !important;
+}
 .font-heading,
 h1,
 h2,
@@ -382,9 +387,10 @@ h3 {
 }
 .footer {
   background: #0f172a;
-  width: min(1280px, calc(100% - 48px));
-  margin: 30px auto 0;
-  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: none;
+  margin: 30px 0 0;
+  /* border-radius: 24px 24px 0 0; */
 }
 .footer-title {
   color: #fff;
@@ -819,8 +825,7 @@ body[data-theme="dark"] .badge-amber {
   .nav-shell,
   .hero,
   .hero.max-w-6xl,
-  .section,
-  .footer {
+  .section {
     width: calc(100% - 24px);
   }
   .hero {
