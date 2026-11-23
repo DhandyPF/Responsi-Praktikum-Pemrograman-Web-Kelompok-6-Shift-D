@@ -8,7 +8,7 @@ if (!$id || $id < 1) {
     exit('Lowongan tidak ditemukan.');
 }
 
-$stmt = $pdo->prepare("SELECT l.*, u.nama AS penyedia, u.lokasi AS lokasi_penyedia, u.deskripsi AS deskripsi_penyedia, u.is_verified
+$stmt = $pdo->prepare("SELECT l.*, u.nama AS penyedia, u.lokasi AS lokasi_penyedia, u.deskripsi AS deskripsi_penyedia, u.is_verified, u.foto
                        FROM lowongan l
                        JOIN users u ON u.id = l.penyedia_id
                        WHERE l.id = :id
@@ -83,7 +83,7 @@ require __DIR__ . '/includes/header.php';
             <aside class="surface-card p-5 h-fit">
                 <p class="text-xs text-slate-500">Dipublikasikan oleh</p>
                 <div class="flex items-center gap-3 mt-3">
-                    <div class="company-icon"><?= e(strtoupper(substr($job['penyedia'], 0, 1))) ?></div>
+                    <img src="<?= user_avatar(['foto' => $job['foto'], 'role' => 'penyedia']) ?>" alt="<?= e($job['penyedia']) ?>" class="w-12 h-12 rounded-xl object-cover ring-2 ring-emerald/20 shrink-0">
                     <div>
                         <b class="text-ink"><?= e($job['penyedia']) ?></b>
                         <?php if ($job['is_verified']): ?>

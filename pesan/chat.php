@@ -69,7 +69,7 @@ require __DIR__ . '/../includes/header.php';
 
     <section class="dashboard-panel mt-4 chat-panel">
         <div class="chat-head">
-            <span class="avatar"><?= e(strtoupper(mb_substr($conv['lawan_nama'], 0, 1))) ?></span>
+            <img src="<?= user_avatar(['foto' => $conv['lawan_foto'], 'role' => $conv['lawan_role']]) ?>" alt="" class="w-11 h-11 rounded-full object-cover ring-2 ring-teal/20 shrink-0">
             <div>
                 <h2><?= e($conv['lawan_nama']) ?></h2>
                 <p class="text-xs text-slate-500">

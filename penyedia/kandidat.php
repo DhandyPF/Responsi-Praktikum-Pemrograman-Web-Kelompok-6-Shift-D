@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if (isset($_GET['error'])) $error = (string)$_GET['error'];
-$stmt = $pdo->prepare("SELECT l.*,u.nama,u.email,u.telepon,u.lokasi,lo.judul,p.id pesanan_id,p.kode_pesanan,p.jenis_pelaksanaan,p.harga_disepakati,p.status_pekerjaan,p.status_pembayaran,pes.invoice_id,pes.invoice_status,pes.invoice_code,pes.total_tagihan FROM lamaran l JOIN users u ON u.id=l.pekerja_id JOIN lowongan lo ON lo.id=l.lowongan_id LEFT JOIN pesanan p ON p.lamaran_id=l.id LEFT JOIN (SELECT i.pesanan_id,i.id invoice_id,i.status invoice_status,i.kode_invoice invoice_code,i.total_tagihan FROM invoice i JOIN (SELECT pesanan_id,MAX(id) max_id FROM invoice GROUP BY pesanan_id) x ON x.max_id=i.id) pes ON pes.pesanan_id=p.id WHERE lo.penyedia_id=? ORDER BY l.tanggal_lamar DESC");
+$stmt = $pdo->prepare("SELECT l.*,u.nama,u.email,u.telepon,u.lokasi,u.foto,lo.judul,p.id pesanan_id,p.kode_pesanan,p.jenis_pelaksanaan,p.harga_disepakati,p.status_pekerjaan,p.status_pembayaran,pes.invoice_id,pes.invoice_status,pes.invoice_code,pes.total_tagihan FROM lamaran l JOIN users u ON u.id=l.pekerja_id JOIN lowongan lo ON lo.id=l.lowongan_id LEFT JOIN pesanan p ON p.lamaran_id=l.id LEFT JOIN (SELECT i.pesanan_id,i.id invoice_id,i.status invoice_status,i.kode_invoice invoice_code,i.total_tagihan FROM invoice i JOIN (SELECT pesanan_id,MAX(id) max_id FROM invoice GROUP BY pesanan_id) x ON x.max_id=i.id) pes ON pes.pesanan_id=p.id WHERE lo.penyedia_id=? ORDER BY l.tanggal_lamar DESC");
 $stmt->execute([(int)$user['id']]);
 $items = $stmt->fetchAll();
 $pageTitle = 'Kelola Kandidat';
@@ -128,11 +128,15 @@ $success = flash('success');
  ?>
             <article class="surface-card p-4">
                 <div class="flex flex-wrap justify-between gap-3">
-                    <div><b><?= e($x['nama']) ?></b>
-                        <p class="text-xs text-slate-500 mt-1"><?= e($x['email']) ?> · <?= e($x['lokasi']) ?> ·
-                            <?= e($x['telepon'] ?: 'Nomor WhatsApp belum tersedia') ?></p>
-                        <p class="text-sm mt-2">Melamar: <b><?= e($x['judul']) ?></b> ·
-                            <?= e(date('d M Y', strtotime($x['tanggal_lamar']))) ?></p>
+                    <div class="flex items-start gap-3">
+                        <img src="<?= user_avatar(['foto' => $x['foto'], 'role' => 'pekerja']) ?>" alt="" class="w-11 h-11 rounded-full object-cover ring-2 ring-teal/20 shrink-0">
+                        <div>
+                            <b><?= e($x['nama']) ?></b>
+                            <p class="text-xs text-slate-500 mt-1"><?= e($x['email']) ?> · <?= e($x['lokasi']) ?> ·
+                                <?= e($x['telepon'] ?: 'Nomor WhatsApp belum tersedia') ?></p>
+                            <p class="text-sm mt-2">Melamar: <b><?= e($x['judul']) ?></b> ·
+                                <?= e(date('d M Y', strtotime($x['tanggal_lamar']))) ?></p>
+                        </div>
                     </div><span class="<?= $statusClass ?>"><?= e($x['status']) ?></span>
                 </div>
                 <?php if ($x['status'] === 'Diterima' && $x['pesanan_id']): ?>

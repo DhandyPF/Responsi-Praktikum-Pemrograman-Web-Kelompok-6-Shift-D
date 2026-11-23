@@ -9,7 +9,7 @@ if (!$id || $id < 1) {
     exit('Jasa tidak ditemukan.');
 }
 
-$q = $pdo->prepare("SELECT j.*, u.nama AS pekerja, u.lokasi AS lokasi_pekerja, u.deskripsi AS deskripsi_pekerja, u.skills, u.telepon, u.is_verified
+$q = $pdo->prepare("SELECT j.*, u.nama AS pekerja, u.lokasi AS lokasi_pekerja, u.deskripsi AS deskripsi_pekerja, u.skills, u.telepon, u.is_verified, u.foto
                     FROM jasa j
                     JOIN users u ON u.id = j.pekerja_id
                     WHERE j.id = ? AND j.status_publikasi = 'Aktif'
@@ -53,14 +53,14 @@ require __DIR__ . '/includes/header.php';
     <section class="dashboard-panel mt-5">
         <div class="grid md:grid-cols-[1fr_300px] gap-8">
             <article>
-                <p class="eyebrow"><?= e($service['kategori']) ?> · <?= e($service['lokasi']) ?></p>
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="<?= user_avatar(['foto' => $service['foto'], 'role' => 'pekerja']) ?>" alt="<?= e($service['pekerja']) ?>" class="w-12 h-12 rounded-full object-cover ring-2 ring-teal/20 shrink-0">
+                    <div>
+                        <p class="eyebrow"><?= e($service['kategori']) ?> · <?= e($service['lokasi']) ?></p>
+                        <p class="text-xs text-slate-500">Oleh <strong class="text-ink"><?= e($service['pekerja']) ?></strong> <?= $service['is_verified'] ? '· <span class="text-teal font-semibold">✓ Terverifikasi</span>' : '' ?></p>
+                    </div>
+                </div>
                 <h1 class="dashboard-title"><?= e($service['nama_jasa']) ?></h1>
-                <p class="text-sm text-slate-500 mt-2">
-                    Oleh <?= e($service['pekerja']) ?>
-                    <?php if ($service['is_verified']): ?>
-                    · Akun terverifikasi
-                    <?php endif; ?>
-                </p>
                 <p class="mt-3 text-sm">★ <?= number_format((float)$rating['avg'], 1) ?> · <?= (int)$rating['count'] ?>
                     ulasan</p>
 

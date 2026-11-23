@@ -61,9 +61,17 @@ $pageTitle = 'Dashboard Pekerja';
 require __DIR__ . '/../includes/header.php';
 ?>
 <main class="dashboard-main">
-    <p class="eyebrow">Ruang talenta</p>
-    <h1 class="dashboard-title">Halo, <?= e($user['nama']) ?>!</h1>
-    <p class="text-sm text-slate-500 mt-2">Pantau peluang, lamaran, dan jasa yang kamu tawarkan.</p>
+    <div class="surface-card p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-4">
+            <img src="<?= user_avatar($user) ?>" alt="<?= e($user['nama']) ?>" class="w-16 h-16 rounded-full object-cover ring-4 ring-teal/20 shadow-sm">
+            <div>
+                <p class="eyebrow">Ruang talenta</p>
+                <h1 class="text-xl font-bold text-ink">Halo, <?= e($user['nama']) ?>!</h1>
+                <p class="text-xs text-slate-500 mt-1"><?= e($user['lokasi'] ?: 'Indonesia') ?> &bull; <span class="text-teal font-semibold">Pekerja / Talenta</span></p>
+            </div>
+        </div>
+        <a href="<?= BASE_URL ?>/pekerja/profil.php" class="btn-secondary text-xs px-4 py-2">Ubah Profil & Foto</a>
+    </div>
 
     <section class="grid sm:grid-cols-3 gap-4 mt-7">
         <div class="surface-card p-5">

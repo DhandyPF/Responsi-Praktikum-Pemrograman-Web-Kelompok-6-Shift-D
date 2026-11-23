@@ -10,7 +10,7 @@ if (!in_array($user['role'], ['pekerja', 'penyedia'], true)) {
 }
 
 $uid = (int) $user['id'];
-$q = $pdo->prepare("SELECT c.id, c.last_message_at, c.created_at, u.nama AS lawan,
+$q = $pdo->prepare("SELECT c.id, c.last_message_at, c.created_at, u.nama AS lawan, u.foto AS lawan_foto, u.role AS lawan_role,
     (SELECT p.isi FROM pesan p WHERE p.percakapan_id=c.id ORDER BY p.id DESC LIMIT 1) AS terakhir,
     (SELECT p.pengirim_id FROM pesan p WHERE p.percakapan_id=c.id ORDER BY p.id DESC LIMIT 1) AS pengirim_terakhir,
     (SELECT COUNT(*) FROM pesan p WHERE p.percakapan_id=c.id AND p.pengirim_id<>? AND p.dibaca_at IS NULL) AS belum_dibaca
@@ -39,7 +39,7 @@ require __DIR__ . '/../includes/header.php';
             <li>
                 <a class="conv-item <?= (int) $c['belum_dibaca'] > 0 ? 'unread' : '' ?>"
                     href="<?= BASE_URL ?>/pesan/chat.php?id=<?= (int) $c['id'] ?>">
-                    <span class="avatar"><?= e(strtoupper(mb_substr($c['lawan'], 0, 1))) ?></span>
+                    <img src="<?= user_avatar(['foto' => $c['lawan_foto'], 'role' => $c['lawan_role']]) ?>" alt="" class="w-10 h-10 rounded-full object-cover shrink-0 ring-1 ring-slate-200">
                     <span class="conv-body">
                         <b class="text-ink"><?= e($c['lawan']) ?></b>
                         <span

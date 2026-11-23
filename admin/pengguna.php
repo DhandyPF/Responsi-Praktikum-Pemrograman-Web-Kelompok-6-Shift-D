@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('/admin/pengguna.php');
 }
 
-$items = $pdo->query("SELECT id, nama, email, role, lokasi, telepon, is_verified, created_at FROM users ORDER BY created_at DESC")->fetchAll();
+$items = $pdo->query("SELECT id, nama, email, role, lokasi, telepon, is_verified, foto, created_at FROM users ORDER BY created_at DESC")->fetchAll();
 
 $pageTitle = 'Kelola Pengguna';
 require __DIR__ . '/../includes/header.php';
@@ -29,7 +29,7 @@ require __DIR__ . '/../includes/header.php';
             <table class="dashboard-table">
                 <thead>
                     <tr>
-                        <th>Nama</th>
+                        <th>Pengguna</th>
                         <th>Peran</th>
                         <th>Lokasi</th>
                         <th>Verifikasi</th>
@@ -39,10 +39,15 @@ require __DIR__ . '/../includes/header.php';
                 <tbody>
                     <?php foreach ($items as $x): ?>
                     <tr>
-                        <th>
-                            <?= e($x['nama']) ?>
-                            <small><?= e($x['email']) ?></small>
-                        </th>
+                        <td>
+                            <div class="flex items-center gap-3 py-1">
+                                <img src="<?= user_avatar($x) ?>" alt="" class="w-9 h-9 rounded-full object-cover shrink-0 ring-2 ring-slate-200">
+                                <div>
+                                    <strong class="block text-ink text-sm"><?= e($x['nama']) ?></strong>
+                                    <small class="text-xs text-slate-500"><?= e($x['email']) ?></small>
+                                </div>
+                            </div>
+                        </td>
                         <td><?= e(ucfirst($x['role'])) ?></td>
                         <td><?= e($x['lokasi'] ?: '-') ?></td>
                         <td>

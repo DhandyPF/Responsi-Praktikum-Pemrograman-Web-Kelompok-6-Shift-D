@@ -9,6 +9,9 @@ yo.html
 /uploads/payments/*
 !/uploads/payments/.htaccess
 !/uploads/payments/.gitkeep
+/uploads/profiles/*
+!/uploads/profiles/.htaccess
+!/uploads/profiles/.gitkeep
 
 # Local secrets / merchant credentials
 /config/midtrans.local.php
