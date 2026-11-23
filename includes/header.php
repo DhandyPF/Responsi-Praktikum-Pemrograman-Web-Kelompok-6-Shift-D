@@ -68,17 +68,6 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
                 <a href="<?= BASE_URL ?>/marketplace.php">Marketplace</a>
                 <a href="<?= BASE_URL ?>/pelatihan.php">Pelatihan</a>
                 <?php if ($user): ?>
-                <?php
-                $profilUrl = match ($user['role'] ?? '') {
-                    'admin' => BASE_URL . '/admin/profil.php',
-                    'penyedia' => BASE_URL . '/penyedia/profil.php',
-                    default => BASE_URL . '/pekerja/profil.php',
-                };
-                ?>
-                <a href="<?= $profilUrl ?>" class="inline-flex items-center gap-1.5 py-1 px-2 rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-800 transition" title="Profil <?= e($user['nama'] ?? '') ?>">
-                    <img src="<?= user_avatar($user) ?>" alt="<?= e($user['nama'] ?? '') ?>" class="w-6 h-6 rounded-full object-cover ring-2 ring-teal/30">
-                    <span class="text-xs font-semibold text-ink max-w-[100px] truncate hidden md:inline"><?= e($user['nama'] ?? '') ?></span>
-                </a>
                 <a href="<?= BASE_URL . dashboard_path($user) ?>">Dashboard</a>
                 <details class="nav-more">
                     <summary>Aktivitas <span aria-hidden="true">⌄</span></summary>
@@ -121,11 +110,27 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
                     </div>
                 </details>
                 <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap"
-                    aria-pressed="false">Mode gelap</button>
+                    aria-pressed="false" title="Ganti mode tampilan">
+                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8a8.5 8.5 0 1 0 11.3 11.3Z"></path>
+                    </svg>
+                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+                    </svg>
+                </button>
                 <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/logout.php">Keluar</a>
                 <?php else: ?>
                 <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap"
-                    aria-pressed="false">Mode gelap</button>
+                    aria-pressed="false" title="Ganti mode tampilan">
+                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8a8.5 8.5 0 1 0 11.3 11.3Z"></path>
+                    </svg>
+                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+                    </svg>
+                </button>
                 <a class="nav-login" href="<?= BASE_URL ?>/auth/login.php">Masuk</a>
                 <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/register.php">Daftar</a>
                 <?php endif ?>
