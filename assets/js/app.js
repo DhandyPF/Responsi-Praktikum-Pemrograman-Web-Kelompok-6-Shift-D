@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.dataset.theme = theme;
     if (themeToggle) {
       const dark = theme === "dark";
-      themeToggle.textContent = dark ? "Mode terang" : "Mode gelap";
       themeToggle.setAttribute(
         "aria-label",
         dark ? "Aktifkan mode terang" : "Aktifkan mode gelap",
