@@ -21,6 +21,8 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="NusaKarya menghubungkan talenta lokal, UMKM, pekerjaan, jasa, dan pelatihan.">
     <title><?= e($pageTitle) ?> | NusaKarya</title>
+    <link rel="icon" type="image/svg+xml" href="<?= BASE_URL ?>/assets/img/nusakarya-n.svg">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/img/nusakarya-n.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -52,14 +54,15 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
         }
     };
     </script>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=6">
 </head>
 
 <body class="bg-mist text-slate-700 antialiased">
     <header class="site-header">
         <nav class="nav-shell max-w-6xl mx-auto" aria-label="Navigasi utama">
             <a href="<?= BASE_URL ?>/index.php" class="brand" aria-label="NusaKarya Beranda">
-                <span class="brand-mark">N</span><span>Nusa<span class="text-teal">Karya</span></span>
+                <img src="<?= BASE_URL ?>/assets/img/nusakarya-n.svg?v=6" alt="" class="brand-logo">
+                <span>Nusa<span class="text-teal">Karya</span></span>
             </a>
             <button class="mobile-menu-btn" id="menuToggle" aria-label="Buka navigasi" aria-expanded="false">☰</button>
             <div class="nav-links" id="navLinks">
@@ -116,7 +119,9 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
                     </svg>
                     <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="12" r="4"></circle>
-                        <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+                        <path
+                            d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42">
+                        </path>
                     </svg>
                 </button>
                 <a class="btn-primary nav-cta" href="<?= BASE_URL ?>/auth/logout.php">Keluar</a>
@@ -128,7 +133,9 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
                     </svg>
                     <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="12" r="4"></circle>
-                        <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+                        <path
+                            d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42">
+                        </path>
                     </svg>
                 </button>
                 <a class="nav-login" href="<?= BASE_URL ?>/auth/login.php">Masuk</a>
