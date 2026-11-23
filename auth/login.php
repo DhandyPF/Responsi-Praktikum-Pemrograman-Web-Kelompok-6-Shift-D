@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
         $error = 'Masukkan email dan kata sandi yang valid.';
     } else {
-        $stmt = $pdo->prepare('SELECT id, nama, email, password, role, lokasi, is_verified FROM users WHERE email = :email LIMIT 1');
+        $stmt = $pdo->prepare('SELECT id, nama, email, password, role, lokasi, is_verified, foto FROM users WHERE email = :email LIMIT 1');
         $stmt->execute(['email' => $email]);
         $account = $stmt->fetch();
         if ($account && password_verify($password, $account['password'])) {

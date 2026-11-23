@@ -1,9 +1,6 @@
--- NUSAKARYA - DATABASE LENGKAP UNTUK INSTALASI BARU
--- Berisi skema dasar dan seluruh tabel/perubahan Tahap 2 sampai Tahap 4.5.
--- Import satu kali pada database kosong melalui phpMyAdmin.
-
--- NusaKarya database
--- Import melalui phpMyAdmin / MySQL CLI.
+-- NUSAKARYA - DATABASE LENGKAP, DIPISAH PER JENIS QUERY
+-- Jalankan section 1 sampai 5 secara berurutan pada database kosong.
+-- Setiap section boleh di-copy dan dijalankan sendiri di tab SQL phpMyAdmin.
 
 -- ============================================================
 -- SECTION 1: CREATE DATABASE, USE, SET NAMES
@@ -29,6 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
   lokasi VARCHAR(120) DEFAULT NULL,
   deskripsi TEXT DEFAULT NULL,
   skills TEXT DEFAULT NULL,
+  foto VARCHAR(255) DEFAULT NULL,
   is_verified TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -710,6 +708,9 @@ ALTER TABLE pesanan
   ADD UNIQUE KEY uq_pesanan_lamaran (lamaran_id),
   ADD CONSTRAINT fk_pesanan_lamaran FOREIGN KEY (lamaran_id)
     REFERENCES lamaran(id) ON DELETE SET NULL;
+
+-- Ubah tabel: users (tambah kolom foto profil jika belum ada)
+-- ALTER TABLE users ADD COLUMN foto VARCHAR(255) DEFAULT NULL AFTER skills;
 
 -- ============================================================
 -- SECTION 4: INSERT (data awal)

@@ -68,6 +68,17 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
                 <a href="<?= BASE_URL ?>/marketplace.php">Marketplace</a>
                 <a href="<?= BASE_URL ?>/pelatihan.php">Pelatihan</a>
                 <?php if ($user): ?>
+                <?php
+                $profilUrl = match ($user['role'] ?? '') {
+                    'admin' => BASE_URL . '/admin/profil.php',
+                    'penyedia' => BASE_URL . '/penyedia/profil.php',
+                    default => BASE_URL . '/pekerja/profil.php',
+                };
+                ?>
+                <a href="<?= $profilUrl ?>" class="inline-flex items-center gap-1.5 py-1 px-2 rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-800 transition" title="Profil <?= e($user['nama'] ?? '') ?>">
+                    <img src="<?= user_avatar($user) ?>" alt="<?= e($user['nama'] ?? '') ?>" class="w-6 h-6 rounded-full object-cover ring-2 ring-teal/30">
+                    <span class="text-xs font-semibold text-ink max-w-[100px] truncate hidden md:inline"><?= e($user['nama'] ?? '') ?></span>
+                </a>
                 <a href="<?= BASE_URL . dashboard_path($user) ?>">Dashboard</a>
                 <details class="nav-more">
                     <summary>Aktivitas <span aria-hidden="true">⌄</span></summary>
@@ -97,6 +108,8 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
                                 class="nav-badge"><?= $navNotif > 99 ? '99+' : (int)$navNotif ?></span><?php endif ?></a>
                         <a href="<?= BASE_URL ?>/penyedia/profil.php">Profil Usaha</a>
                         <?php elseif (($user['role'] ?? '') === 'admin'): ?>
+                        <span class="nav-menu-label">Akun Administrator</span>
+                        <a href="<?= BASE_URL ?>/admin/profil.php">Profil Saya</a>
                         <span class="nav-menu-label">Administrasi</span>
                         <a href="<?= BASE_URL ?>/admin/tahap4-transaksi.php">Transaksi</a>
                         <a href="<?= BASE_URL ?>/admin/pencairan.php">Pencairan</a>

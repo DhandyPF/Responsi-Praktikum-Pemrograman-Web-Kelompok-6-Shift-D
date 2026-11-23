@@ -278,12 +278,14 @@ function get_or_create_conversation(Database $pdo, int $buyerId, int $workerId, 
 
 /** Percakapan hanya terlihat oleh dua pesertanya. null jika bukan peserta / tidak ada. */
 function conversation_for_user(Database $pdo, int $convId, int $userId): ?array {
-    $q = $pdo->prepare('SELECT c.*, ub.nama AS nama_pembeli, uw.nama AS nama_pekerja FROM percakapan c JOIN users ub ON ub.id=c.pembeli_id JOIN users uw ON uw.id=c.pekerja_id WHERE c.id=? AND (c.pembeli_id=? OR c.pekerja_id=?) LIMIT 1');
+    $q = $pdo->prepare('SELECT c.*, ub.nama AS nama_pembeli, ub.foto AS foto_pembeli, ub.role AS role_pembeli, uw.nama AS nama_pekerja, uw.foto AS foto_pekerja, uw.role AS role_pekerja FROM percakapan c JOIN users ub ON ub.id=c.pembeli_id JOIN users uw ON uw.id=c.pekerja_id WHERE c.id=? AND (c.pembeli_id=? OR c.pekerja_id=?) LIMIT 1');
     $q->execute([$convId, $userId, $userId]);
     $c = $q->fetch();
     if (!$c) return null;
     $c['lawan_id'] = (int)$c['pembeli_id'] === $userId ? (int)$c['pekerja_id'] : (int)$c['pembeli_id'];
     $c['lawan_nama'] = (int)$c['pembeli_id'] === $userId ? $c['nama_pekerja'] : $c['nama_pembeli'];
+    $c['lawan_foto'] = (int)$c['pembeli_id'] === $userId ? ($c['foto_pekerja'] ?? null) : ($c['foto_pembeli'] ?? null);
+    $c['lawan_role'] = (int)$c['pembeli_id'] === $userId ? ($c['role_pekerja'] ?? 'pekerja') : ($c['role_pembeli'] ?? 'penyedia');
     return $c;
 }
 
