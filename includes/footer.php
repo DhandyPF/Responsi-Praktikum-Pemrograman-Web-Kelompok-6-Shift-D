@@ -2,7 +2,8 @@
     <div class="max-w-6xl mx-auto px-5 py-12 grid md:grid-cols-4 gap-9">
         <div class="md:col-span-1">
             <a href="<?= BASE_URL ?>/index.php" class="brand text-white">
-                <span class="brand-mark">N</span><span>Nusa<span class="text-emerald-300">Karya</span></span>
+                <img src="<?= BASE_URL ?>/assets/img/nusakarya-logo.png" alt="" class="brand-logo">
+                <span>Nusa<span class="text-emerald-300">Karya</span></span>
             </a>
             <p class="text-slate-400 text-sm mt-4 leading-7">Jembatan inovasi, talenta, dan peluang ekonomi lokal.
                 Tumbuh bersama potensi Indonesia.</p>

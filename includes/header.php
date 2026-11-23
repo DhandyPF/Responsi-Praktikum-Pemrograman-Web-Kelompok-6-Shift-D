@@ -21,6 +21,8 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="NusaKarya menghubungkan talenta lokal, UMKM, pekerjaan, jasa, dan pelatihan.">
     <title><?= e($pageTitle) ?> | NusaKarya</title>
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/nusakarya-logo.png">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/img/nusakarya-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -59,7 +61,8 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
     <header class="site-header">
         <nav class="nav-shell max-w-6xl mx-auto" aria-label="Navigasi utama">
             <a href="<?= BASE_URL ?>/index.php" class="brand" aria-label="NusaKarya Beranda">
-                <span class="brand-mark">N</span><span>Nusa<span class="text-teal">Karya</span></span>
+                <img src="<?= BASE_URL ?>/assets/img/nusakarya-logo.png" alt="" class="brand-logo">
+                <span>Nusa<span class="text-teal">Karya</span></span>
             </a>
             <button class="mobile-menu-btn" id="menuToggle" aria-label="Buka navigasi" aria-expanded="false">☰</button>
             <div class="nav-links" id="navLinks">
