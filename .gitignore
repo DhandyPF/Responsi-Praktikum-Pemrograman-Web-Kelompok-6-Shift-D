@@ -1,5 +1,6 @@
 # Editor / local preview
 palette-preview.html
+yo.html
 
 # Runtime uploads: simpan folder dan proteksi, jangan commit file pengguna
 /uploads/portfolio/*
