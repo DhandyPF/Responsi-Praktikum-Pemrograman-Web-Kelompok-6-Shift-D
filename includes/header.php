@@ -22,7 +22,7 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
     <meta name="description" content="NusaKarya menghubungkan talenta lokal, UMKM, pekerjaan, jasa, dan pelatihan.">
     <title><?= e($pageTitle) ?> | NusaKarya</title>
     <link rel="icon" type="image/svg+xml" href="<?= BASE_URL ?>/assets/img/nusakarya-n.svg">
-    <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/img/nusakarya-n.svg">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/img/nusakarya-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -54,7 +54,8 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
         }
     };
     </script>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= filemtime(__DIR__ . '/../assets/css/style.css') ?>">
+    <link rel="stylesheet"
+        href="<?= BASE_URL ?>/assets/css/style.css?v=<?= filemtime(__DIR__ . '/../assets/css/style.css') ?>">
 </head>
 
 <body class="bg-mist text-slate-700 antialiased">
