@@ -74,7 +74,12 @@ require __DIR__ . '/includes/header.php';
                     <p class="text-xs text-slate-500">Mulai dari</p>
                     <strong class="text-ink"><?= rupiah($x['harga_paket'] ?? $x['harga_mulai']) ?></strong>
                 </div>
-                <a class="btn-primary" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$x['id'] ?>">Lihat detail</a>
+                <div class="flex flex-wrap justify-end gap-2">
+                    <?php if (current_user() && current_user()['role'] === 'pekerja' && (int)$x['pekerja_id'] === (int)current_user()['id']): ?>
+                    <a class="btn-secondary" href="<?= BASE_URL ?>/pekerja/paket-jasa.php?edit=<?= (int)$x['id'] ?>">Edit</a>
+                    <?php endif; ?>
+                    <a class="btn-primary" href="<?= BASE_URL ?>/detail-jasa.php?id=<?= (int)$x['id'] ?>">Lihat detail</a>
+                </div>
             </div>
         </article>
         <?php endforeach; ?>

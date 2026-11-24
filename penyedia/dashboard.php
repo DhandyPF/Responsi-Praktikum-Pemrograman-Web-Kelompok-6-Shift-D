@@ -107,6 +107,10 @@ require __DIR__ . '/../includes/header.php';
                 <b>Kelola kandidat</b>
                 <p class="text-xs text-slate-500 mt-2">Tinjau pelamar dan perbarui status seleksi.</p>
             </a>
+            <a class="surface-card p-5" href="<?= BASE_URL ?>/penyedia/pelatihan.php">
+                <b>Kelola pelatihan</b>
+                <p class="text-xs text-slate-500 mt-2">Publikasikan dan perbarui materi pelatihan.</p>
+            </a>
             <a class="surface-card p-5" href="<?= BASE_URL ?>/penyedia/pesanan.php">
                 <b>Pesanan jasa saya</b>
                 <p class="text-xs text-slate-500 mt-2">Pantau pesanan, batalkan, dan beri ulasan.</p>

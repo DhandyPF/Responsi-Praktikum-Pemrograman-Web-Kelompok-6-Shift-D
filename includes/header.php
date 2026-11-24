@@ -92,6 +92,7 @@ if ($user && in_array($user['role'] ?? '', ['pekerja', 'penyedia'], true)) {
                         <?php elseif (($user['role'] ?? '') === 'penyedia'): ?>
                         <span class="nav-menu-label">Kelola usaha & pekerjaan</span>
                         <a href="<?= BASE_URL ?>/penyedia/lowongan.php">Lowongan Saya</a>
+                        <a href="<?= BASE_URL ?>/penyedia/pelatihan.php">Pelatihan Saya</a>
                         <a href="<?= BASE_URL ?>/penyedia/kandidat.php">Kandidat</a>
                         <a href="<?= BASE_URL ?>/penyedia/tahap4-pesanan.php">Transaksi & Pesanan</a>
                         <span class="nav-menu-label">Komunikasi & profil</span>

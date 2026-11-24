@@ -30,6 +30,12 @@ require __DIR__ . '/includes/header.php';
             <p class="text-sm leading-6 mt-4"><?= e($item['deskripsi']) ?></p>
             <div class="mt-5 flex flex-wrap justify-between gap-2 text-sm"><span><?= (int)$item['jumlah_modul'] ?>
                     modul</span><span class="badge-green">Badge: <?= e($item['nama_badge']) ?></span></div>
+            <?php $user = current_user(); ?>
+            <?php if ($user && $user['role'] === 'penyedia' && (int)$item['penyedia_id'] === (int)$user['id']): ?>
+            <div class="mt-4">
+                <a class="btn-secondary" href="<?= BASE_URL ?>/penyedia/pelatihan.php?edit=<?= (int)$item['id'] ?>">Edit pelatihan</a>
+            </div>
+            <?php endif; ?>
         </article><?php endforeach; ?>
     </div><?php else: ?><div class="empty-state">Belum ada pelatihan yang sesuai.</div><?php endif; ?>
 </main>

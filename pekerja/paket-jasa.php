@@ -96,6 +96,16 @@ $q = $pdo->prepare('SELECT p.*, j.nama_jasa FROM paket_jasa p JOIN jasa j ON j.i
 $q->execute([$u['id']]);
 $packages = $q->fetchAll();
 
+$editService = null;
+if (isset($_GET['edit'])) {
+    foreach ($services as $service) {
+        if ((int)$service['id'] === (int)$_GET['edit']) {
+            $editService = $service;
+            break;
+        }
+    }
+}
+
 $pageTitle = 'Kelola jasa & paket';
 require __DIR__ . '/../includes/header.php';
 ?>
@@ -112,21 +122,22 @@ require __DIR__ . '/../includes/header.php';
         <form method="post" enctype="multipart/form-data" class="dashboard-form">
             <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
             <input type="hidden" name="action" value="service">
+            <input type="hidden" name="id" value="<?= (int)($editService['id'] ?? 0) ?>">
 
             <label>Nama jasa
-                <input class="form-control" name="nama_jasa" required>
+                <input class="form-control" name="nama_jasa" maxlength="150" required value="<?= e($editService['nama_jasa'] ?? '') ?>">
             </label>
 
             <label>Kategori
                 <select class="form-control" name="kategori">
                     <?php foreach (['Desain', 'Konten', 'Teknologi', 'Administrasi', 'Lainnya'] as $c): ?>
-                    <option><?= e($c) ?></option>
+                    <option <?= (($editService['kategori'] ?? '') === $c ? 'selected' : '') ?>><?= e($c) ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
 
             <label>Lokasi
-                <input class="form-control" name="lokasi" value="<?= e($u['lokasi'] ?? '') ?>" required>
+                <input class="form-control" name="lokasi" value="<?= e($editService['lokasi'] ?? $u['lokasi'] ?? '') ?>" required>
             </label>
 
             <label>Foto jasa (opsional)
@@ -134,14 +145,19 @@ require __DIR__ . '/../includes/header.php';
             </label>
 
             <label>Harga mulai
-                <input class="form-control" name="harga_mulai" type="number" min="0" step="1000" required>
+                <input class="form-control" name="harga_mulai" type="number" min="0" step="1000" required value="<?= e((string)($editService['harga_mulai'] ?? '')) ?>">
             </label>
 
             <label class="dashboard-span">Deskripsi
-                <textarea class="form-control" name="deskripsi" rows="4" required></textarea>
+                <textarea class="form-control" name="deskripsi" rows="4" maxlength="5000" required><?= e($editService['deskripsi'] ?? '') ?></textarea>
             </label>
 
-            <button class="btn-primary dashboard-span">Simpan jasa</button>
+            <div class="dashboard-span flex flex-wrap gap-2">
+                <button class="btn-primary"><?= $editService ? 'Simpan perubahan' : 'Simpan jasa' ?></button>
+                <?php if ($editService): ?>
+                <a class="btn-secondary" href="<?= BASE_URL ?>/pekerja/paket-jasa.php">Batal edit</a>
+                <?php endif; ?>
+            </div>
         </form>
     </section>
 
@@ -194,6 +210,23 @@ require __DIR__ . '/../includes/header.php';
         </form>
         <?php endif; ?>
     </section>
+
+    <?php if ($services): ?>
+    <section class="dashboard-panel mb-6">
+        <h2 class="font-bold text-xl mb-4">Jasa milik Anda</h2>
+        <div class="service-manage-list">
+            <?php foreach ($services as $service): ?>
+            <article class="border rounded-xl p-4 flex flex-wrap justify-between gap-3">
+                <div>
+                    <strong><?= e($service['nama_jasa']) ?></strong>
+                    <p class="text-sm text-slate-500"><?= e($service['kategori']) ?> · <?= rupiah($service['harga_mulai']) ?> · <?= e($service['lokasi']) ?></p>
+                </div>
+                <a class="btn-secondary" href="?edit=<?= (int)$service['id'] ?>">Edit jasa</a>
+            </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <section class="dashboard-panel">
         <h2 class="font-bold text-xl mb-4">Paket aktif dan nonaktif</h2>
