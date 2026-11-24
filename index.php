@@ -94,6 +94,7 @@ require __DIR__ . '/includes/header.php';
             <div class="card-grid">
                 <?php foreach ($jobs as $job): ?>
                 <article class="job-card">
+                    <img class="card-thumb" src="<?= e(card_image($job['gambar'] ?? null, $job['kategori'] ?? '', 'uploads/portfolio')) ?>" alt="<?= e($job['judul']) ?>" loading="lazy">
                     <div class="flex items-center gap-3">
                         <div class="company-icon"><?= e(strtoupper(substr($job['penyedia'], 0, 1))) ?></div>
                         <div>

@@ -13,4 +13,4 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-define("BASE_URL", ""); // Sesuaikan dengan nama folder di htdocs.
+define("BASE_URL", "/nusakarya"); // Sesuaikan dengan nama folder di htdocs.

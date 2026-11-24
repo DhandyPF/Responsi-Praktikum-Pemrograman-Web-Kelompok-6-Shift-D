@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/config/koneksi.php'; require_once __DIR__ . '/config/functions.php';
-try{$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified,(SELECT AVG(r.rating) FROM ulasan r WHERE r.jasa_id=j.id) rating_avg,(SELECT COUNT(*) FROM ulasan r WHERE r.jasa_id=j.id) rating_count FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
-catch(mysqli_sql_exception $e){error_log('jasa rating: '.$e->getMessage());$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
+try{$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified,(SELECT g.file_path FROM jasa_gambar g WHERE g.jasa_id=j.id ORDER BY g.is_utama DESC, g.urutan ASC, g.id ASC LIMIT 1) AS gambar,(SELECT AVG(r.rating) FROM ulasan r WHERE r.jasa_id=j.id) rating_avg,(SELECT COUNT(*) FROM ulasan r WHERE r.jasa_id=j.id) rating_count FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
+catch(mysqli_sql_exception $e){error_log('jasa rating: '.$e->getMessage());$items=$pdo->query("SELECT j.*,u.nama pekerja,u.is_verified,(SELECT g.file_path FROM jasa_gambar g WHERE g.jasa_id=j.id ORDER BY g.is_utama DESC, g.urutan ASC, g.id ASC LIMIT 1) AS gambar FROM jasa j JOIN users u ON u.id=j.pekerja_id ORDER BY j.created_at DESC")->fetchAll();}
 $pageTitle='Marketplace Jasa'; require __DIR__.'/includes/header.php';
 ?>
 <main class="max-w-6xl mx-auto px-5 py-16 min-h-[65vh]">
@@ -19,6 +19,7 @@ $pageTitle='Marketplace Jasa'; require __DIR__.'/includes/header.php';
     <div class="card-grid"><?php foreach($items as $x): ?><article class="job-card" data-listing-card
             data-search="<?= e($x['nama_jasa'].' '.$x['pekerja'].' '.$x['deskripsi']) ?>"
             data-category="<?= e($x['kategori']) ?>" data-location="<?= e($x['lokasi']) ?>">
+            <img class="card-thumb" src="<?= e(card_image($x['gambar'] ?? null, $x['kategori'] ?? '', 'uploads/portfolio')) ?>" alt="<?= e($x['nama_jasa']) ?>" loading="lazy">
             <div class="flex items-center gap-3">
                 <div class="avatar"><?= e(strtoupper(substr($x['pekerja'],0,1))) ?></div>
                 <div><b class="text-sm text-ink"><?= e($x['pekerja']) ?></b>

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/tahap4.php';
+require_once __DIR__ . '/../config/stage2.php';
 
 require_login('pekerja');
 $u = current_user();
@@ -25,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $cat = 'Lainnya';
             }
 
+            $newImg = save_portfolio_image($_FILES['gambar'] ?? []);
+
             if ($id) {
                 $q = $pdo->prepare('UPDATE jasa SET nama_jasa = ?, kategori = ?, lokasi = ?, harga_mulai = ?, deskripsi = ? WHERE id = ? AND pekerja_id = ?');
                 $q->execute([$name, $cat, $loc, $price, $desc, $id, $u['id']]);
@@ -32,6 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $q = $pdo->prepare("INSERT INTO jasa (pekerja_id, nama_jasa, kategori, lokasi, harga_mulai, deskripsi, status_publikasi) VALUES (?, ?, ?, ?, ?, ?, 'Aktif')");
                 $q->execute([$u['id'], $name, $cat, $loc, $price, $desc]);
                 $id = (int)$pdo->lastInsertId();
+            }
+
+            if ($newImg) {
+                $oldImgQ = $pdo->prepare('SELECT file_path FROM jasa_gambar WHERE jasa_id = ? AND is_utama = 1');
+                $oldImgQ->execute([$id]);
+                foreach ($oldImgQ->fetchAll() as $old) {
+                    delete_portfolio_image($old['file_path']);
+                }
+                $pdo->prepare('DELETE FROM jasa_gambar WHERE jasa_id = ? AND is_utama = 1')->execute([$id]);
+                $pdo->prepare('INSERT INTO jasa_gambar (jasa_id, file_path, is_utama, urutan) VALUES (?, ?, 1, 0)')->execute([$id, $newImg]);
             }
 
             t4_audit($pdo, (int)$u['id'], 'service.saved', 'jasa', $id);
@@ -96,7 +109,7 @@ require __DIR__ . '/../includes/header.php';
 
     <section class="dashboard-panel mb-6">
         <h2 class="font-bold text-xl mb-4">Buat / perbarui jasa</h2>
-        <form method="post" class="dashboard-form">
+        <form method="post" enctype="multipart/form-data" class="dashboard-form">
             <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
             <input type="hidden" name="action" value="service">
 
@@ -114,6 +127,10 @@ require __DIR__ . '/../includes/header.php';
 
             <label>Lokasi
                 <input class="form-control" name="lokasi" value="<?= e($u['lokasi'] ?? '') ?>" required>
+            </label>
+
+            <label>Foto jasa (opsional)
+                <input class="form-control" type="file" name="gambar" accept="image/jpeg,image/png,image/webp">
             </label>
 
             <label>Harga mulai

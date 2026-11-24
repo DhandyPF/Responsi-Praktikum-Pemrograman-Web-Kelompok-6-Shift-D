@@ -147,3 +147,24 @@ function role_label(string $role): string
         default => ucfirst($role),
     };
 }
+
+function card_image(?string $file, string $kategori, string $folder): string
+{
+    if ($file) {
+        $path = dirname(__DIR__) . '/' . trim($folder, '/') . '/' . $file;
+        if (is_file($path)) {
+            return BASE_URL . '/' . trim($folder, '/') . '/' . rawurlencode($file);
+        }
+    }
+    $cat = strtolower(trim($kategori));
+    $map = [
+        'desain' => 'placeholder-desain.svg',
+        'konten' => 'placeholder-konten.svg',
+        'teknologi' => 'placeholder-teknologi.svg',
+        'administrasi' => 'placeholder-administrasi.svg',
+        'lainnya' => 'placeholder-lainnya.svg',
+    ];
+    $svg = $map[$cat] ?? 'placeholder-default.svg';
+    return BASE_URL . '/assets/img/' . $svg;
+}
+

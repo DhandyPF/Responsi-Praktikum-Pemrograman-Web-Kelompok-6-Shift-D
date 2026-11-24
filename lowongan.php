@@ -18,6 +18,7 @@ $pageTitle='Bursa Kerja'; require __DIR__.'/includes/header.php';
     <div class="card-grid"><?php foreach($items as $x): ?><article class="job-card" data-listing-card
             data-search="<?= e($x['judul'].' '.$x['penyedia'].' '.$x['deskripsi']) ?>"
             data-category="<?= e($x['kategori']) ?>" data-location="<?= e($x['lokasi']) ?>">
+            <img class="card-thumb" src="<?= e(card_image($x['gambar'] ?? null, $x['kategori'] ?? '', 'uploads/portfolio')) ?>" alt="<?= e($x['judul']) ?>" loading="lazy">
             <div class="flex items-center gap-3">
                 <div class="company-icon"><?= e(strtoupper(substr($x['penyedia'],0,1))) ?></div>
                 <div><b class="text-sm text-ink"><?= e($x['penyedia']) ?></b>

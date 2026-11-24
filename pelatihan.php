@@ -23,6 +23,7 @@ require __DIR__ . '/includes/header.php';
             href="<?= BASE_URL ?>/pelatihan.php">Reset</a><?php endif; ?></form>
     <?php if ($items): ?><div class="card-grid">
         <?php foreach ($items as $item): ?><article class="job-card">
+            <img class="card-thumb" src="<?= e(card_image($item['gambar'] ?? null, $item['kategori'] ?? '', 'uploads/portfolio')) ?>" alt="<?= e($item['judul_pelatihan']) ?>" loading="lazy">
             <p class="eyebrow"><?= e($item['kategori']) ?></p>
             <h2 class="font-bold text-xl text-ink mt-2"><?= e($item['judul_pelatihan']) ?></h2>
             <p class="text-sm text-slate-500 mt-2">Penyedia: <?= e($item['nama_penyedia']) ?></p>

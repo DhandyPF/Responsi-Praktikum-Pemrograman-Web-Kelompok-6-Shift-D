@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/functions.php';
+require_once __DIR__ . '/../config/stage2.php';
 
 require_login('penyedia');
 $user = current_user();
@@ -9,6 +10,12 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     if (isset($_POST['delete'])) {
+        $qOld = $pdo->prepare('SELECT gambar FROM lowongan WHERE id = :id AND penyedia_id = :user');
+        $qOld->execute(['id' => (int)$_POST['delete'], 'user' => (int)$user['id']]);
+        $oldImg = $qOld->fetchColumn();
+        if ($oldImg) {
+            delete_portfolio_image($oldImg);
+        }
         $stmt = $pdo->prepare('DELETE FROM lowongan WHERE id = :id AND penyedia_id = :user');
         $stmt->execute(['id' => (int)$_POST['delete'], 'user' => (int)$user['id']]);
         flash('success', 'Lowongan berhasil dihapus.');
@@ -23,23 +30,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($judul === '' || $lokasi === '' || $deskripsi === '') {
             $error = 'Judul, lokasi, dan deskripsi wajib diisi.';
         } else {
-            $stmt = $pdo->prepare('INSERT INTO lowongan (penyedia_id, judul, kategori, jenis_pekerjaan, lokasi, gaji_min, gaji_max, deskripsi, persyaratan, batas_lamaran, status) VALUES (:user, :judul, :kategori, :jenis, :lokasi, :gaji_min, :gaji_max, :deskripsi, :persyaratan, :batas, "Aktif")');
-            $stmt->execute([
-                'user'        => $user['id'],
-                'judul'       => $judul,
-                'kategori'    => $_POST['kategori'] ?? 'Lainnya',
-                'jenis'       => $_POST['jenis_pekerjaan'] ?? 'Penuh waktu',
-                'lokasi'      => $lokasi,
-                'gaji_min'    => (float)($_POST['gaji_min'] ?: 0),
-                'gaji_max'    => (float)($_POST['gaji_max'] ?: 0),
-                'deskripsi'   => $deskripsi,
-                'persyaratan' => trim($_POST['persyaratan'] ?? ''),
-                'batas'       => $_POST['batas_lamaran'] ?: null,
-            ]);
-            flash('success', 'Lowongan berhasil dipublikasikan.');
+            try {
+                $gambar = save_portfolio_image($_FILES['gambar'] ?? []);
+                $stmt = $pdo->prepare('INSERT INTO lowongan (penyedia_id, judul, kategori, jenis_pekerjaan, lokasi, gaji_min, gaji_max, deskripsi, persyaratan, batas_lamaran, status, gambar) VALUES (:user, :judul, :kategori, :jenis, :lokasi, :gaji_min, :gaji_max, :deskripsi, :persyaratan, :batas, "Aktif", :gambar)');
+                $stmt->execute([
+                    'user'        => $user['id'],
+                    'judul'       => $judul,
+                    'kategori'    => $_POST['kategori'] ?? 'Lainnya',
+                    'jenis'       => $_POST['jenis_pekerjaan'] ?? 'Penuh waktu',
+                    'lokasi'      => $lokasi,
+                    'gaji_min'    => (float)($_POST['gaji_min'] ?: 0),
+                    'gaji_max'    => (float)($_POST['gaji_max'] ?: 0),
+                    'deskripsi'   => $deskripsi,
+                    'persyaratan' => trim($_POST['persyaratan'] ?? ''),
+                    'batas'       => $_POST['batas_lamaran'] ?: null,
+                    'gambar'      => $gambar,
+                ]);
+                flash('success', 'Lowongan berhasil dipublikasikan.');
+            } catch (RuntimeException $e) {
+                $error = $e->getMessage();
+            }
         }
     }
-    redirect('/penyedia/lowongan.php');
+    if ($error === '') {
+        redirect('/penyedia/lowongan.php');
+    }
 }
 
 $stmt = $pdo->prepare('SELECT * FROM lowongan WHERE penyedia_id = :user ORDER BY created_at DESC');
@@ -65,7 +80,7 @@ require __DIR__ . '/../includes/header.php';
 
     <section class="dashboard-panel">
         <h2>Publikasikan lowongan</h2>
-        <form method="post" class="dashboard-form">
+        <form method="post" enctype="multipart/form-data" class="dashboard-form">
             <input type="hidden" name="_csrf" value="<?= e(csrf_token()) ?>">
 
             <label>Judul
@@ -86,6 +101,10 @@ require __DIR__ . '/../includes/header.php';
 
             <label>Lokasi
                 <input class="form-control" name="lokasi" required>
+            </label>
+
+            <label>Foto lowongan (opsional)
+                <input class="form-control" type="file" name="gambar" accept="image/jpeg,image/png,image/webp">
             </label>
 
             <label>Gaji minimum
