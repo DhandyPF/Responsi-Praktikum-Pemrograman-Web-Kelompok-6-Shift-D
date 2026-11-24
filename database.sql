@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS lowongan (
   deskripsi TEXT NOT NULL,
   persyaratan TEXT DEFAULT NULL,
   batas_lamaran DATE DEFAULT NULL,
+  gambar VARCHAR(255) NULL,
   status ENUM('Aktif','Ditutup') NOT NULL DEFAULT 'Aktif',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_lowongan_penyedia FOREIGN KEY (penyedia_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -90,6 +91,7 @@ CREATE TABLE IF NOT EXISTS pelatihan (
   jumlah_modul SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   nama_badge VARCHAR(120) NOT NULL,
   deskripsi TEXT NOT NULL,
+  gambar VARCHAR(255) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_pelatihan_penyedia FOREIGN KEY (penyedia_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -710,7 +712,7 @@ ALTER TABLE pesanan
     REFERENCES lamaran(id) ON DELETE SET NULL;
 
 -- Ubah tabel: users (tambah kolom foto profil jika belum ada)
--- ALTER TABLE users ADD COLUMN foto VARCHAR(255) DEFAULT NULL AFTER skills;
+ALTER TABLE users ADD COLUMN foto VARCHAR(255) DEFAULT NULL AFTER skills;
 
 -- ============================================================
 -- SECTION 4: INSERT (data awal)

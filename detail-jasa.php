@@ -9,7 +9,8 @@ if (!$id || $id < 1) {
     exit('Jasa tidak ditemukan.');
 }
 
-$q = $pdo->prepare("SELECT j.*, u.nama AS pekerja, u.lokasi AS lokasi_pekerja, u.deskripsi AS deskripsi_pekerja, u.skills, u.telepon, u.is_verified, u.foto
+$q = $pdo->prepare("SELECT j.*, u.nama AS pekerja, u.lokasi AS lokasi_pekerja, u.deskripsi AS deskripsi_pekerja, u.skills, u.telepon, u.is_verified, u.foto,
+                    (SELECT g.file_path FROM jasa_gambar g WHERE g.jasa_id = j.id ORDER BY g.is_utama DESC, g.urutan ASC, g.id ASC LIMIT 1) AS gambar
                     FROM jasa j
                     JOIN users u ON u.id = j.pekerja_id
                     WHERE j.id = ? AND j.status_publikasi = 'Aktif'
@@ -53,6 +54,7 @@ require __DIR__ . '/includes/header.php';
     <section class="dashboard-panel mt-5">
         <div class="grid md:grid-cols-[1fr_300px] gap-8">
             <article>
+                <img class="card-thumb mb-6" src="<?= e(card_image($service['gambar'] ?? null, $service['kategori'] ?? '', 'uploads/portfolio')) ?>" alt="<?= e($service['nama_jasa']) ?>" loading="lazy">
                 <div class="flex items-center gap-3 mb-3">
                     <img src="<?= user_avatar(['foto' => $service['foto'], 'role' => 'pekerja']) ?>" alt="<?= e($service['pekerja']) ?>" class="w-12 h-12 rounded-full object-cover ring-2 ring-teal/20 shrink-0">
                     <div>

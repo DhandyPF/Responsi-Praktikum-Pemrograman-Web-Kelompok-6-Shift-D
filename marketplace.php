@@ -7,6 +7,7 @@ $cat = trim((string)($_GET['kategori'] ?? ''));
 $params = [];
 
 $sql = "SELECT j.*, u.nama AS nama_pekerja, u.lokasi AS lokasi_pekerja,
+        (SELECT g.file_path FROM jasa_gambar g WHERE g.jasa_id = j.id ORDER BY g.is_utama DESC, g.urutan ASC, g.id ASC LIMIT 1) AS gambar,
         (SELECT MIN(p.harga) FROM paket_jasa p WHERE p.jasa_id = j.id AND p.is_aktif = 1) AS harga_paket,
         (SELECT AVG(r.rating) FROM ulasan r WHERE r.jasa_id = j.id) AS rating,
         (SELECT COUNT(*) FROM ulasan r WHERE r.jasa_id = j.id) AS total_ulasan
@@ -58,6 +59,7 @@ require __DIR__ . '/includes/header.php';
     <div class="card-grid">
         <?php foreach ($items as $x): ?>
         <article class="job-card">
+            <img class="card-thumb" src="<?= e(card_image($x['gambar'] ?? null, $x['kategori'] ?? '', 'uploads/portfolio')) ?>" alt="<?= e($x['nama_jasa']) ?>" loading="lazy">
             <div class="flex justify-between gap-2">
                 <span class="eyebrow"><?= e($x['kategori']) ?></span>
                 <span class="text-xs text-amber-600">★

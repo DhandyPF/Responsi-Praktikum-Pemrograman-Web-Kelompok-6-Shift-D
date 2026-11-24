@@ -39,6 +39,7 @@ require __DIR__ . '/includes/header.php';
     <a class="text-link" href="<?= BASE_URL ?>/lowongan.php">← Kembali ke Bursa Kerja</a>
 
     <section class="surface-card p-6 md:p-9 mt-5">
+        <img class="card-thumb mb-6" src="<?= e(card_image($job['gambar'] ?? null, $job['kategori'] ?? '', 'uploads/portfolio')) ?>" alt="<?= e($job['judul']) ?>" loading="lazy">
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div>
                 <p class="eyebrow">Detail lowongan pekerjaan</p>

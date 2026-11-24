@@ -412,6 +412,7 @@ h3 {
   border-radius: 18px;
   background: white;
   transition: 0.2s;
+  overflow: hidden;
 }
 
 .job-card:hover {
@@ -1977,4 +1978,23 @@ body[data-theme="dark"] .deal-confirmed {
     max-height: 55vh;
     overflow-y: auto;
   }
+}
+
+.card-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.job-card .card-thumb {
+  display: block !important;
+  width: calc(100% + 44px) !important;
+  max-width: calc(100% + 44px) !important;
+  min-width: calc(100% + 44px) !important;
+  margin: -22px -22px 18px -22px !important;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 17px 17px 0 0 !important;
 }
