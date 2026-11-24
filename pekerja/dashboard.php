@@ -127,7 +127,7 @@ require __DIR__ . '/../includes/header.php';
                 <b>Portfolio saya</b>
                 <p class="text-xs text-slate-500 mt-2">Kelola karya, tautan, dan gambar hasil pekerjaan.</p>
             </a>
-            <a class="surface-card p-5" href="<?= BASE_URL ?>/pekerja/jasa.php">
+            <a class="surface-card p-5" href="<?= BASE_URL ?>/pekerja/paket-jasa.php">
                 <b>Kelola jasa</b>
                 <p class="text-xs text-slate-500 mt-2">Publikasikan keahlian yang kamu tawarkan.</p>
             </a>
